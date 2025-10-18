@@ -6,11 +6,13 @@ import Breadcrumb from '../../components/ui/Breadcrumb';
 import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
-
 import Icon from '../../components/AppIcon';
 
+// wallet components 
+import WalletSummary from '../wallet/components/WalletSummary';
+
 // Import transfer components
-import TransferForm from './components/TransferForm';
+import TransferFormNew from './components/TransferFormNew';
 import BeneficiaryList from './components/BeneficiaryList';
 import AddBeneficiaryModal from './components/AddBeneficiaryModal';
 import TransferConfirmationModal from './components/TransferConfirmationModal';
@@ -108,19 +110,21 @@ const TransferWallet = () => {
               icon="ArrowUpRight"
               actions={[]}
             />
-
+            
+            {/* Wallet Summary Section */}
+            <WalletSummary />
+            <TransferFormNew
+                    onSubmit={handleTransferSubmit}
+                    selectedRecipient={transferData?.recipient}
+            />
             {/* Main Content - Two Column Layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {/* Left Column - Transfer Form */}
               <div className="lg:col-span-2">
                 <div className="bg-card rounded-lg border border-border p-6">
-                  <h2 className="text-xl font-semibold text-foreground mb-6">Transfer Details</h2>
+                  <h2 className="text-xl font-semibold text-foreground mb-6">Recent Transactions</h2>
                   
-                  <TransferForm
-                    onSubmit={handleTransferSubmit}
-                    selectedRecipient={transferData?.recipient}
-                    onAddBeneficiary={() => setIsAddBeneficiaryOpen(true)}
-                  />
+                  
                 </div>
               </div>
 

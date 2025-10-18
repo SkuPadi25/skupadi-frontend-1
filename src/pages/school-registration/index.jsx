@@ -166,7 +166,7 @@ const SchoolRegistration = () => {
                      formData?.agreeToTerms;
 
   return (
-    <div className="flex bg-gray-50">
+    <div className="min-h-screen flex bg-gray-50">
        {/* Left Panel - Dark Blue */}
       <div className="hidden lg:flex lg:w-[45%] bg-gradient-to-br from-[#1a2c5b] via-[#0f1f44] to-[#0a1a38] 
                       text-white px-8 flex-col justify-between relative overflow-hidden">

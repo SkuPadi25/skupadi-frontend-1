@@ -44,37 +44,40 @@ const WalletCard = ({SchoolContext}) => {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <p className="text-sm text-muted-foreground">Acc Name</p>
-            <div className="flex items-center space-x-2">
-              <p className="text-lg font-medium text-foreground">{walletData?.accName}</p>
-              <button
-                onClick={() => copyToClipboard(walletData?.accName)}
-                className="p-1 hover:bg-muted rounded transition-colors"
-                title="Copy account name"
-              >
-                <Icon name="Copy" size={16} className="text-muted-foreground hover:text-foreground" />
-              </button>
-            </div>
+            <p className="text-sm text-muted-foreground">Acc Name - <span className='space-x-2'> </span> 
+              <span className="flex items-center space-x-2">
+                <span className="text-lg font-medium text-foreground">{walletData?.accName}</span>
+                <button
+                  onClick={() => copyToClipboard(walletData?.accName)}
+                  className="p-1 hover:bg-muted rounded transition-colors"
+                  title="Copy account name"
+                >
+                  <Icon name="Copy" size={16} className="text-muted-foreground hover:text-foreground" />
+                </button>
+              </span>
+            </p>
           </div>
         </div>
 
-        {/* Account Number */}
+        {/* Account Number
         <div className="space-y-1">
           <p className="text-sm text-muted-foreground">Acc Number</p>
           <p className="text-base font-mono text-foreground">{walletData?.accNumber}</p>
-        </div>
+        </div> */}
 
         {/* Bank Name */}
         <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">Bank Name</p>
-          <p className="text-base font-medium text-foreground">{walletData?.bankName}</p>
+          <p className="text-sm text-muted-foreground">Bank Name -<span className='space-x-2'> </span> 
+            {walletData?.bankName}</p>
         </div>
       </div>
 
       {/* Wallet Balance Section */}
       <div className="mt-6 pt-4 border-t border-border">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm text-muted-foreground">Account Balance</p>
+           <p className="text-2xl font-bold text-foreground">
+          {isBalanceVisible ? walletData?.walletBalance : formatMaskedBalance(walletData?.walletBalance)}
+          </p>
           <button
             onClick={toggleBalanceVisibility}
             className="p-1 hover:bg-muted rounded transition-colors"
@@ -87,9 +90,8 @@ const WalletCard = ({SchoolContext}) => {
             />
           </button>
         </div>
-        <p className="text-2xl font-bold text-foreground">
-          {isBalanceVisible ? walletData?.walletBalance : formatMaskedBalance(walletData?.walletBalance)}
-        </p>
+       
+        <p className="text-sm text-muted-foreground">Account Balance</p>
       </div>
     </div>
   );

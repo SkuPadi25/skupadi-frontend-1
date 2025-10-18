@@ -96,7 +96,7 @@ const BeneficiaryList = ({ searchTerm, onSelect, selectedRecipient }) => {
         >
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3 flex-1 min-w-0">
-              <div className="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10  rounded-lg flex items-center justify-center flex-shrink-0">
                 <Icon name="Building2" size={16} className="text-muted-foreground" />
               </div>
               
