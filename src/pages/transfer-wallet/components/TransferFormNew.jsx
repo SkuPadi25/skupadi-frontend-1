@@ -116,7 +116,8 @@ const TransferFormNew = () => {
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="bg-blue-900 hover:bg-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
+            className="bg-gradient-to-r from-[#0a1952] to-[#1638b8]
+             hover:bg-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
           >
             <Send size={20} />
             Transfer
@@ -202,7 +203,7 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
   const [errors, setErrors] = useState({});
 
   const recentBeneficiaries = [
-    { id: 1, name: 'Receiver Name', bankName: 'Bank Name', accountNumber: 'XXXXXXXXXX' },
+    { id: 1, name: 'Receiver Name', bankName: 'Bank Name', accountNumber: '1357902468' },
     { id: 2, name: 'Receiver Name', bankName: 'Bank Name', accountNumber: 'XXXXXXXXXX' },
     { id: 3, name: 'Receiver Name', bankName: 'Bank Name', accountNumber: 'XXXXXXXXXX' },
     { id: 4, name: 'Receiver Name', bankName: 'Bank Name', accountNumber: 'XXXXXXXXXX' },
@@ -229,7 +230,7 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
     const newErrors = {};
     if (!formData.bank) newErrors.bank = 'Please select a bank';
     if (!formData.accountNumber) newErrors.accountNumber = 'Please enter account number';
-    if (!formData.narration.trim()) newErrors.narration = 'Please enter narration';
+    // if (!formData.narration.trim()) newErrors.narration = 'Please enter narration';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -320,7 +321,7 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
               <h3 className="text-sm font-semibold text-gray-900">Recent Beneficiaries</h3>
               <button className="text-sm text-blue-600 underline hover:text-blue-700 font-medium">Find Beneficiaries</button>
             </div>
-            <div className="flex gap-3 overflow-x-auto pb-2">
+            <div className="flex gap-3 overflow-x-hidden pb-2">
               {recentBeneficiaries.map((beneficiary) => (
                 <button
                   key={beneficiary.id}
@@ -340,7 +341,7 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between py-3">
+          <div className="flex items-center justify-between py-3 border-t border-b border-blue-300">
             <label htmlFor="save-beneficiary" className="text-sm text-gray-700 cursor-pointer">
               Add to saved beneficiaries?
             </label>
@@ -360,7 +361,8 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
 
           <button
             onClick={handleSubmit}
-            className="w-1/2 mx-auto flex justify-center bg-blue-900 hover:bg-blue-800 text-center text-white font-semibold py-4 rounded-xl 
+            className="w-1/2 mx-auto flex justify-center bg-gradient-to-r from-[#0a1952] to-[#1638b8] 
+            hover:bg-blue-800 text-center text-white font-semibold py-4 rounded-xl 
                         transition-colors mt-6"
           >
             Confirm Recipient
@@ -393,28 +395,21 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl w-full max-w-md">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-8 z-50">
+      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] px-8">
         <div className="relative p-8">
           <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
             <X size={20} />
           </button>
           
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
-                  <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M3 10h18M7 14h2M7 17h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900">Add amount</h2>
+            <h2 className="text-lg font-bold text-gray-900">Add amount</h2>
           </div>
 
           {/* Paying From */}
+          <p className="text-md text-center text-gray-500 mb-2">Paying From</p>
           <div className="mb-6 p-4 bg-gray-50 rounded-xl">
-            <p className="text-xs text-gray-500 mb-2">Paying From</p>
+            
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
                 {userAccount.name.split(' ').map(n => n[0]).join('')}
@@ -428,7 +423,7 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
 
           {/* Amount Input */}
           <div className="mb-6">
-            <p className="text-sm text-gray-600 mb-3">Enter amount</p>
+            <p className="text-sm text-center text-gray-600 mb-3">Enter amount</p>
             <div className="flex items-center justify-center mb-6">
               <span className="text-4xl font-bold text-gray-900">₦</span>
               <input
@@ -446,7 +441,7 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
           </div>
 
           {/* Balance Info */}
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-2 gap-4 bg-gray-50 pt-4 rounded-t rounded-xl">
             <div className="text-center">
               <p className="text-xs text-gray-500 mb-1">Wallet Balance Before</p>
               <p className="font-semibold text-gray-900">₦{userAccount.balance.toLocaleString()}</p>
@@ -458,7 +453,7 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
           </div>
 
           {/* Fee Details */}
-          <div className="space-y-3 mb-6 p-4 bg-gray-50 rounded-xl">
+          <div className="space-y-3 mb-6 p-4 bg-gray-50 ">
             <div className="flex justify-between">
               <span className="text-sm text-gray-600">Amount</span>
               <span className="font-semibold">₦{amount || '0'}</span>
@@ -483,7 +478,7 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
             </button>
             <button
               onClick={handleContinue}
-              className="py-3 px-6 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-colors"
+              className="py-3 px-6 bg-gradient-to-r from-[#0a1952] to-[#1638b8] text-white rounded-xl font-semibold hover:bg-blue-800 transition-colors"
             >
               Continue
             </button>
@@ -498,13 +493,10 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
 const PaymentConfirmationModal = ({ onClose, onConfirm, transferData }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl w-full max-w-md">
+      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh]">
         <div className="relative p-8">
-          <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
-            <X size={20} />
-          </button>
           
-          <div className="flex flex-col items-center mb-8">
+          <div className="flex mx-auto justify-between items-center mb-8">
             <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
               <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
@@ -513,7 +505,11 @@ const PaymentConfirmationModal = ({ onClose, onConfirm, transferData }) => {
                 </svg>
               </div>
             </div>
-            <h2 className="text-2xl font-bold text-gray-900">Confirm Transaction</h2>
+            <h2 className="text-2xl font-bold text-gray-900">Confirm Transfer</h2>
+            <div></div>
+            <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
+              <X size={20} />
+          </button>
           </div>
 
           {/* Transaction Details */}
@@ -561,13 +557,13 @@ const PaymentConfirmationModal = ({ onClose, onConfirm, transferData }) => {
           <div className="space-y-3">
             <button
               onClick={onConfirm}
-              className="w-full py-4 bg-blue-900 text-white rounded-xl font-semibold hover:bg-blue-800 transition-colors"
+              className="w-full py-4 bg-gradient-to-r from-[#0a1952] to-[#1638b8] text-white rounded-xl font-semibold hover:bg-blue-800 transition-colors"
             >
               Proceed with this transaction
             </button>
             <button
               onClick={onClose}
-              className="w-full py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-1/2 mx-auto flex justify-center  py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
             >
               Cancel
             </button>

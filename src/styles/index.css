@@ -10,3 +10,7 @@ body {
   font-family: inherit;
   margin: unset;
 }
+
+.sk-bg-color{
+  color: #0F2780;
+}
