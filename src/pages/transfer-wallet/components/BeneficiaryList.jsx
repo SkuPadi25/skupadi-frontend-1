@@ -114,14 +114,14 @@ const BeneficiaryList = ({ searchTerm, onSelect, selectedRecipient }) => {
             </div>
 
             <div className="flex items-center space-x-1 ml-2">
-              <Button
+              {/* <Button
                 variant="ghost"
                 size="sm"
                 className="h-8 w-8 p-0"
                 onClick={(e) => handleEdit(beneficiary, e)}
               >
                 <Icon name="Edit2" size={14} />
-              </Button>
+              </Button> */}
               <Button
                 variant="ghost"
                 size="sm"

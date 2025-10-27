@@ -91,11 +91,17 @@ const FileUploadZone = ({ onFileSelect, selectedFile, isProcessing }) => {
             </>
           ) : (
             <>
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto">
-                <Icon name="Upload" size={32} color="white" />
+              <div className="w-24 h-24  flex items-center justify-center mx-auto">
+                {/* <Icon name="Upload" size={32} color="white" /> */}
+                <svg width="102" height="54" viewBox="0 0 102 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M25.5 53.0684C18.4682 53.0684 12.461 51.3271 7.47845 47.8445C2.49591 44.3619 0.00309091 40.1053 0 35.0749C0 30.7631 1.81591 26.9212 5.44773 23.5491C9.07955 20.177 13.8318 18.0211 19.7045 17.0814C21.6364 11.9957 25.5 7.87734 31.2955 4.7264C37.0909 1.57547 43.6591 0 51 0C60.0409 0 67.711 2.2532 74.0103 6.75959C80.3095 11.266 83.4576 16.7519 83.4545 23.2174C88.7864 23.6597 93.211 25.3048 96.7285 28.1528C100.246 31.0008 102.003 34.3308 102 38.1429C102 42.2889 99.9724 45.8135 95.9171 48.7168C91.8618 51.6201 86.9349 53.0706 81.1364 53.0684H25.5Z" fill="#0D216C"/>
+<path d="M60.5663 44.2237H41.4337V26.3555H26L51 8.84473L76 26.3555H60.5663V44.2237Z" fill="white"/>
+</svg>
+
+
               </div>
-              <div>
-                <h3 className="text-lg font-semibold text-foreground">
+              <div className='py-6'>
+                <h3 className="text-lg font-semibold text-foreground py-6">
                   {isDragOver ? 'Drop your CSV file here' : 'Upload Student Data'}
                 </h3>
                 <p className="text-sm text-muted-foreground mt-1">
@@ -119,11 +125,9 @@ const FileUploadZone = ({ onFileSelect, selectedFile, isProcessing }) => {
         {/* File Requirements */}
         <div className="mt-6 p-4 bg-card rounded-lg border border-border">
           <h4 className="text-sm font-medium text-foreground mb-2">File Requirements:</h4>
-          <ul className="text-xs text-muted-foreground space-y-1">
-            <li>• File format: CSV (.csv)</li>
-            <li>• Maximum file size: 10 MB</li>
-            <li>• Maximum records: 1,000 students</li>
-            <li>• Required columns: First Name, Last Name, Gender, Class, Date of Birth, Parent Name, Parent Phone</li>
+          <ul className="text-sm text-muted-foreground space-y-1">
+            <li>File format: CSV (.csv),Maximum file size: 10 MB,Maximum records: 1,000 students</li>
+            <li> Required columns: First Name, Last Name, Gender, Class, Date of Birth, Parent Name, Parent Phone</li>
           </ul>
         </div>
       </div>
@@ -131,7 +135,7 @@ const FileUploadZone = ({ onFileSelect, selectedFile, isProcessing }) => {
       {/* Sample Template Download */}
       <div className="bg-card rounded-lg border border-border p-6">
         <div className="flex items-start space-x-4">
-          <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center flex-shrink-0">
             <Icon name="Download" size={20} color="white" />
           </div>
           <div className="flex-1">
