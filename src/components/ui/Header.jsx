@@ -5,9 +5,14 @@ import Button from './Button';
 import SettingsModal from '../SettingsModal';
 import NotificationCenter from '../NotificationCenter';
 import { useSchool } from '../../contexts/SchoolContext';
+import { useAuth } from '../../contexts/AuthContext';
+import { getUser, clearAuth } from '../../utils/storage';
 
-const Header = ({ onMenuToggle, user }) => {
+// import math
+
+const Header = ({ onMenuToggle }) => {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const { currentSchool } = useSchool();
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -55,9 +60,10 @@ const Header = ({ onMenuToggle, user }) => {
     };
   }, [showProfileDropdown]);
 
-  const handleLogOut = () => {
+  const handleLogOut = async () => {
     setShowProfileDropdown(false);
-    navigate('/log-out');
+    await signOut();
+    navigate("/school-login", { replace: true });
   };
 
   const handleProfileClick = () => {
@@ -82,19 +88,31 @@ const Header = ({ onMenuToggle, user }) => {
     // Handle settings save logic here
   };
 
+  // get user from local store 
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const u = getUser();
+    setUser(u);
+  }, []);
+
+
+
+
   // Get user initials for avatar
-  const getUserInitials = (name) => {
-    if (!name) return 'AU';
-    return name
-      ?.split(' ')
-      ?.map(word => word?.[0])
-      ?.join('')
-      ?.toUpperCase()
-      ?.slice(0, 2);
+  const getUserInitials = (email) => {
+    if (!email) return 'AD';
+    return email
+      .split('@')[0]
+      .split('.')
+      .map(part => part[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   // Mock notification count - in real app, get from context/service
-  const notificationCount = 3;
+  const notificationCount = 5;
 
   return (
     <>
@@ -111,7 +129,7 @@ const Header = ({ onMenuToggle, user }) => {
             >
               <Icon name="Menu" size={20} />
             </Button>
-            
+
             {/* Current School Info - Desktop Only */}
             {currentSchool && (
               <div className="hidden lg:flex items-center">
@@ -122,7 +140,7 @@ const Header = ({ onMenuToggle, user }) => {
                 </div>
               </div>
             )}
-            
+
             {/* Current Date */}
             <div className="hidden md:block">
               <p className="text-sm text-muted-foreground">{currentDate}</p>
@@ -133,9 +151,9 @@ const Header = ({ onMenuToggle, user }) => {
           <div className="flex items-center space-x-2">
             {/* Notifications */}
             <div className="relative">
-              <Button 
-                variant="ghost" 
-                size="icon" 
+              <Button
+                variant="ghost"
+                size="icon"
                 onClick={handleNotificationClick}
                 className="relative hover:bg-muted"
                 aria-label={`Notifications ${notificationCount > 0 ? `(${notificationCount} new)` : ''}`}
@@ -150,9 +168,9 @@ const Header = ({ onMenuToggle, user }) => {
             </div>
 
             {/* Search - Desktop Only */}
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               className="hidden md:flex hover:bg-muted"
               aria-label="Search"
             >
@@ -163,37 +181,36 @@ const Header = ({ onMenuToggle, user }) => {
             <div className="relative" ref={profileDropdownRef}>
               <button
                 onClick={handleProfileClick}
-                className={`flex items-center space-x-3 pl-4 pr-2 py-2 border-l border-border hover:bg-muted rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${
-                  showProfileDropdown ? 'bg-muted shadow-sm' : ''
-                }`}
+                className={`flex items-center space-x-3 pl-4 pr-2 py-2 border-l border-border hover:bg-muted rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 ${showProfileDropdown ? 'bg-muted shadow-sm' : ''
+                  }`}
                 aria-expanded={showProfileDropdown}
                 aria-haspopup="true"
                 aria-label="User menu"
               >
                 <div className="hidden md:block text-right">
                   <p className="text-sm font-medium text-foreground truncate max-w-[120px]">
-                    {user?.name || 'Admin User'}
+                    {user?.firstname}
                   </p>
                   <p className="text-xs text-muted-foreground truncate max-w-[120px]">
-                    {user?.email || 'admin@skupadi.com'}
+                    {user?.email}
                   </p>
                 </div>
-                
+
                 {/* User Avatar */}
                 <div className="relative">
                   <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/80 rounded-full flex items-center justify-center ring-2 ring-background">
                     <span className="text-white text-xs font-semibold">
-                      {getUserInitials(user?.name)}
+                      {getUserInitials(user?.email)}
                     </span>
                   </div>
                   {/* Online Status Indicator */}
                   <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success border-2 border-background rounded-full"></div>
                 </div>
-                
-                <Icon 
-                  name={showProfileDropdown ? "ChevronUp" : "ChevronDown"} 
-                  size={14} 
-                  className="text-muted-foreground transition-transform duration-200" 
+
+                <Icon
+                  name={showProfileDropdown ? "ChevronUp" : "ChevronDown"}
+                  size={14}
+                  className="text-muted-foreground transition-transform duration-200"
                 />
               </button>
 
@@ -211,17 +228,17 @@ const Header = ({ onMenuToggle, user }) => {
                         </div>
                         <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-success border-2 border-background rounded-full"></div>
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-semibold text-foreground truncate">
-                          {user?.name || 'Admin User'}
+                          {user?.fullName}
                         </h3>
                         <p className="text-xs text-muted-foreground truncate">
-                          {user?.email || 'admin@skupadi.com'}
+                          {user?.email}
                         </p>
                         <div className="flex items-center space-x-2 mt-1">
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                            {user?.role || 'Administrator'}
+                            {user?.role || "Admin"}
                           </span>
                           <span className="inline-flex items-center space-x-1 text-xs text-success">
                             <div className="w-1.5 h-1.5 bg-success rounded-full"></div>
@@ -233,13 +250,13 @@ const Header = ({ onMenuToggle, user }) => {
                   </div>
 
                   {/* Menu Items */}
-                  <div className="py-2">
+                  <div className="py-2 overflow-y-auto max-h-[calc(100vh-14rem)]">
                     {/* Profile Management Section */}
                     <div className="px-2">
                       <p className="px-2 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                         Profile
                       </p>
-                      
+
                       <button
                         onClick={() => {
                           setShowProfileDropdown(false);
@@ -378,13 +395,13 @@ const Header = ({ onMenuToggle, user }) => {
       </header>
 
       {/* Notification Center */}
-      <NotificationCenter 
+      <NotificationCenter
         isOpen={showNotificationCenter}
         onClose={() => setShowNotificationCenter(false)}
       />
 
       {/* Settings Modal */}
-      <SettingsModal 
+      <SettingsModal
         isOpen={showSettingsModal}
         onClose={handleSettingsClose}
         onSave={handleSettingsSave}

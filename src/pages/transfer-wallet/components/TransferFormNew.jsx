@@ -6,17 +6,20 @@ import SetPinModal from './modals/SetPinModal';
 import VerifyIdentityModal from './modals/VerifyIdentityModal';
 import EnterPinModal from './modals/EnterPinModal';
 
+const TRANSFER_STEPS = {
+  NONE: null,
+  RECIPIENT: 'recipient',
+  AMOUNT: 'amount',
+  CONFIRM: 'confirm',
+  ENTER_PIN: 'enter_pin',
+  SET_PIN: 'set_pin',
+  VERIFY: 'verify'
+};
+
 
 const TransferFormNew = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAmountModalOpen, setIsAmountModalOpen] = useState(false);
-  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  
+  const [currentStep, setCurrentStep] = useState(TRANSFER_STEPS.NONE);
 
-  // Add these state variables:
-  const [isPinModalOpen, setIsPinModalOpen] = useState(false);
-  const [isVerifyModalOpen, setIsVerifyModalOpen] = useState(false);
-  const [isEnterPinModalOpen, setIsEnterPinModalOpen] = useState(false);
   const [pinMode, setPinMode] = useState('set'); // 'set' or 'reset'
 
   const [transferData, setTransferData] = useState({
@@ -39,28 +42,29 @@ const TransferFormNew = () => {
   };
 
   const handleRecipientConfirm = (formData) => {
-    setTransferData(prev => ({
-      ...prev,
-      ...formData,
-      accountName: 'Receiver Account Name' // Mock - would come from API
-    }));
-    setIsModalOpen(false);
-    setIsAmountModalOpen(true);
-  };
+  setTransferData(prev => ({
+    ...prev,
+    ...formData,
+    accountName: 'Receiver Account Name'
+  }));
 
-  const handleAmountContinue = (amount) => {
-    const fee = calculateFee(amount);
-    const total = parseFloat(amount) + fee;
-    
-    setTransferData(prev => ({
-      ...prev,
-      amount: amount,
-      fee: fee,
-      total: total
-    }));
-    setIsAmountModalOpen(false);
-    setIsConfirmationModalOpen(true);
-  };
+  setCurrentStep(TRANSFER_STEPS.AMOUNT);
+};
+
+
+const handleAmountContinue = (amount) => {
+  const fee = calculateFee(amount);
+  const total = Number(amount) + fee;
+
+  setTransferData(prev => ({
+    ...prev,
+    amount,
+    fee,
+    total
+  }));
+
+  setCurrentStep(TRANSFER_STEPS.CONFIRM);
+};
 
   const calculateFee = (amount) => {
     const numAmount = parseFloat(amount) || 0;
@@ -84,8 +88,31 @@ const TransferFormNew = () => {
       total: 0,
       saveBeneficiary: false
     });
-    
   };
+
+  const handleConfirmRecipient = () => {
+    setCurrentStep(TRANSFER_STEPS.ENTER_PIN);
+  };
+
+  const handleFinalSubmit = () => {
+    console.log('FINAL TRANSFER DATA:', transferData);
+
+    alert('Payment processed successfully');
+
+    setTransferData({
+    bank: '',
+    accountNumber: '',
+    accountName: '',
+    narration: '',
+    amount: '',
+    fee: 0,
+    total: 0,
+    saveBeneficiary: false
+  });
+
+  setCurrentStep(TRANSFER_STEPS.NONE);
+};
+
 
   return (
     <div className=" bg-gray-50 p-8">
@@ -115,7 +142,7 @@ const TransferFormNew = () => {
             Reset PIN
           </button>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setCurrentStep(TRANSFER_STEPS.RECIPIENT)}
             className="bg-gradient-to-r from-[#0a1952] to-[#1638b8]
              hover:bg-blue-800 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center gap-2 shadow-lg hover:shadow-xl"
           >
@@ -124,81 +151,78 @@ const TransferFormNew = () => {
           </button>
         </div>
       </div>
-            <SetPinModal
-        isOpen={isPinModalOpen}
-        onClose={() => setIsPinModalOpen(false)}
-        onSuccess={(data) => {
-            console.log('PIN set:', data);
-            setIsPinModalOpen(false);
-            setIsVerifyModalOpen(true);
-        }}
-        />
+          {currentStep === TRANSFER_STEPS.RECIPIENT && (
+      <SendMoneyModal
+        userAccount={userAccount}
+        transferData={transferData}
+        onClose={() => setCurrentStep(TRANSFER_STEPS.NONE)}
+        onSubmit={handleRecipientConfirm}
+      />
+    )}
 
-        <VerifyIdentityModal
-        isOpen={isVerifyModalOpen}
-        onClose={() => setIsVerifyModalOpen(false)}
+    {currentStep === TRANSFER_STEPS.AMOUNT && (
+      <AddAmountModal
+        userAccount={userAccount}
+        transferData={transferData}
+        onClose={() => setCurrentStep(TRANSFER_STEPS.RECIPIENT)}
+        onContinue={handleAmountContinue}
+      />
+    )}
+
+    {currentStep === TRANSFER_STEPS.CONFIRM && (
+      <PaymentConfirmationModal
+        transferData={transferData}
+        onClose={() => setCurrentStep(TRANSFER_STEPS.AMOUNT)}
+        onConfirm={handleConfirmRecipient}
+        onToggleSave={() =>
+          setTransferData(prev => ({
+            ...prev,
+            saveBeneficiary: !prev.saveBeneficiary
+          }))
+        }
+      />
+    )}
+
+    {currentStep === TRANSFER_STEPS.ENTER_PIN && (
+      <EnterPinModal
+        isOpen
+        onClose={() => setCurrentStep(TRANSFER_STEPS.CONFIRM)}
+        onConfirm={handleFinalSubmit}
+        onResetPin={() => setCurrentStep(TRANSFER_STEPS.SET_PIN)}
+      />
+    )}
+
+    {currentStep === TRANSFER_STEPS.SET_PIN && (
+      <SetPinModal
+        isOpen
+        onClose={() => setCurrentStep(TRANSFER_STEPS.NONE)}
+        onSuccess={() => setCurrentStep(TRANSFER_STEPS.VERIFY)}
+      />
+    )}
+
+    {currentStep === TRANSFER_STEPS.VERIFY && (
+      <VerifyIdentityModal
+        isOpen
         email="user@email.com"
-        onVerify={(data) => {
-            console.log('Verified:', data);
-            setIsVerifyModalOpen(false);
-            alert(`${pinMode === 'set' ? 'PIN set' : 'PIN reset'} successfully!`);
-        }}
-        />
+        onClose={() => setCurrentStep(TRANSFER_STEPS.NONE)}
+        onVerify={() => setCurrentStep(TRANSFER_STEPS.NONE)}
+      />
+    )}
 
-        <EnterPinModal
-        isOpen={isEnterPinModalOpen}
-        onClose={() => setIsEnterPinModalOpen(false)}
-        onConfirm={(data) => {
-            console.log('PIN entered:', data);
-            setIsEnterPinModalOpen(false);
-            // Process payment here
-        }}
-        onResetPin={() => {
-            setPinMode('reset');
-            setIsPinModalOpen(true);
-        }}
-        />
-        
-      {/* Modal 1: Send Money */}
-      {isModalOpen && (
-        <SendMoneyModal 
-          onClose={() => setIsModalOpen(false)} 
-          onSubmit={handleRecipientConfirm}
-          userAccount={userAccount}
-        />
-      )}
-
-      {/* Modal 2: Add Amount */}
-      {isAmountModalOpen && (
-        <AddAmountModal 
-          onClose={() => setIsAmountModalOpen(false)} 
-          onContinue={handleAmountContinue}
-          userAccount={userAccount}
-          transferData={transferData}
-        />
-      )}
-
-      {/* Modal 3: Payment Confirmation */}
-      {isConfirmationModalOpen && (
-        <PaymentConfirmationModal 
-          onClose={() => setIsConfirmationModalOpen(false)} 
-          onConfirm={handleFinalConfirm}
-          transferData={transferData}
-        />
-      )}
     </div>
   );
 };
 
  // Modal 1: Send Money
-const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
+const SendMoneyModal = ({ onSubmit, onClose, userAccount, transferData }) => {
   const [formData, setFormData] = useState({
-    selectedBeneficiary: null,
-    bank: '',
-    accountNumber: '',
-    narration: '',
-    saveBeneficiary: false
-  });
+  bank: transferData.bank,
+  accountNumber: transferData.accountNumber,
+  narration: transferData.narration,
+  saveBeneficiary: transferData.saveBeneficiary,
+  selectedBeneficiary: null
+});
+
 
   const [errors, setErrors] = useState({});
 
@@ -237,7 +261,12 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
 
   const handleSubmit = () => {
     if (validateForm()) {
-      onSubmit(formData);
+      onSubmit({
+        'bank':formData.bank,
+        'accountNumber': formData.accountNumber,
+        'narration': formData.narration,
+        'saveBeneficiary': formData.saveBeneficiary
+      });
     }
   };
 
@@ -260,7 +289,7 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
             </div>
             <div className='mx-auto justify-center'>
             <h2 className="text-2xl text-center font-bold text-gray-900">Send Money</h2>
-            <p className="text-blue-700 mt-1">Enter details to complete your transfer</p>
+            <p className="text-blue-700 text-bold mt-1">Enter details to complete your transfer</p>
             </div>
           </div>
 
@@ -268,11 +297,11 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
           <p className="text-sm text-center text-gray-500 mb-2">Paying From</p>
           <div className="mb-6 p-4 bg-gray-50 rounded-xl">
             
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 bg-white">
               <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
                 {userAccount.name.split(' ').map(n => n[0]).join('')}
               </div>
-              <div>
+              <div className=''>
                 <p className="font-semibold text-gray-900">{userAccount.name}</p>
                 <p className="text-sm text-gray-500">{userAccount.bankName} ******{userAccount.accountNumber.slice(-4)}</p>
               </div>
@@ -280,11 +309,12 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
           </div>
         </div>
 
-        <div className="px-8 pb-8 space-y-4">
+        <div className="px-8 space-y-2">
           <div>
+            <p>Enter receiver's account number</p>
             <input
               type="text"
-              placeholder="Enter receiver's account number"
+              placeholder="0612349910"
               value={formData.accountNumber}
               onChange={(e) => handleInputChange('accountNumber', e.target.value)}
               className="w-full px-4 py-3.5 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -340,32 +370,13 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
               ))}
             </div>
           </div>
-
-          <div className="flex items-center justify-between py-3 border-t border-b border-blue-300">
-            <label htmlFor="save-beneficiary" className="text-sm text-gray-700 cursor-pointer">
-              Add to saved beneficiaries?
-            </label>
-            <button
-              id="save-beneficiary"
-              type="button"
-              onClick={() => handleInputChange('saveBeneficiary', !formData.saveBeneficiary)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                formData.saveBeneficiary ? 'bg-blue-600' : 'bg-gray-300'
-              }`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                formData.saveBeneficiary ? 'translate-x-6' : 'translate-x-1'
-              }`} />
-            </button>
-          </div>
-
           <button
             onClick={handleSubmit}
             className="w-1/2 mx-auto flex justify-center bg-gradient-to-r from-[#0a1952] to-[#1638b8] 
             hover:bg-blue-800 text-center text-white font-semibold py-4 rounded-xl 
-                        transition-colors mt-6"
+                        transition-colors mt-6 space-y-4"
           >
-            Confirm Recipient
+            Proceed
           </button>
         </div>
       </div>
@@ -375,7 +386,7 @@ const SendMoneyModal = ({ onSubmit, onClose, userAccount }) => {
 
 // Modal 2: Add Amount
 const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(transferData.amount || '');
   const [error, setError] = useState('');
 
   const fee = amount ? (parseFloat(amount) <= 5000 ? 10 : parseFloat(amount) <= 50000 ? 25 : 50) : 0;
@@ -383,20 +394,23 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
   const balanceAfter = userAccount.balance - total;
 
   const handleContinue = () => {
-    if (!amount || parseFloat(amount) <= 0) {
-      setError('Please enter a valid amount');
-      return;
-    }
-    if (parseFloat(amount) > userAccount.balance) {
-      setError('Insufficient balance');
-      return;
-    }
-    onContinue(amount);
-  };
+  if (!amount || Number(amount) <= 0) {
+    setError('Please enter a valid amount');
+    return;
+  }
+
+  if (Number(amount) > userAccount.balance) {
+    setError('Insufficient balance');
+    return;
+  }
+
+  onContinue(amount);
+};
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-8 z-50">
-      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] px-8">
+      <div className="bg-gray-200 rounded-3xl w-full max-w-2xl px-8">
         <div className="relative p-8">
           <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
             <X size={20} />
@@ -422,9 +436,9 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
           </div>
 
           {/* Amount Input */}
-          <div className="mb-6">
+          <div className="flex flex-col justify-center mb-6">
             <p className="text-sm text-center text-gray-600 mb-3">Enter amount</p>
-            <div className="flex items-center justify-center mb-6">
+            <div className="flex items-center justify-center mb-6 w-2/3 bg-gray-50 rounded-xl">
               <span className="text-4xl font-bold text-gray-900">₦</span>
               <input
                 type="number"
@@ -434,7 +448,7 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
                   setError('');
                 }}
                 placeholder="0"
-                className="text-4xl font-bold text-gray-900 bg-transparent border-none outline-none w-48 text-center"
+                className="no-spinner text-4xl font-bold text-gray-900 bg-transparent border-none outline-none w-48 text-center"
               />
             </div>
             {error && <p className="text-red-500 text-sm text-center">{error}</p>}
@@ -490,88 +504,110 @@ const AddAmountModal = ({ onClose, onContinue, userAccount, transferData }) => {
 };
 
 // Modal 3: Payment Confirmation
-const PaymentConfirmationModal = ({ onClose, onConfirm, transferData }) => {
+
+const PaymentConfirmationModal = ({ onClose, onConfirm, onToggleSave, transferData }) => {
+  const {
+    accountName,
+    bank,
+    accountNumber,
+    saveBeneficiary = false
+  } = transferData || {};
+
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh]">
+      <div className="bg-[#f3f4f6] rounded-3xl w-full max-w-xl">
         <div className="relative p-8">
-          
-          <div className="flex mx-auto justify-between items-center mb-8">
-            <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-4">
-              <div className="w-10 h-10 bg-blue-900 rounded-lg flex items-center justify-center">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="text-white">
-                  <rect x="3" y="6" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="2"/>
-                  <path d="M3 10h18M7 14h2M7 17h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                </svg>
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900">Confirm Transfer</h2>
-            <div></div>
-            <button onClick={onClose} className="absolute top-6 right-6 w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center">
-              <X size={20} />
+
+          {/* Close */}
+          <button
+            onClick={onClose}
+            className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center"
+          >
+            <X size={20} />
           </button>
+
+          {/* Bank Icon */}
+          <div className="flex justify-center mb-6">
+            <div className="w-24 h-24 rounded-full bg-blue-200 flex items-center justify-center">
+              <svg
+                width="40"
+                height="40"
+                viewBox="0 0 24 24"
+                fill="none"
+                className="text-blue-900"
+              >
+                <path
+                  d="M3 10h18M5 10V20h14V10M12 3l9 5H3l9-5Z"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </div>
           </div>
 
-          {/* Transaction Details */}
-          <div className="space-y-4 mb-6">
-            <div className="flex justify-between py-3 border-b border-gray-100">
-              <span className="text-sm text-gray-500">Account Number</span>
-              <span className="font-semibold text-gray-900">{transferData.accountNumber}</span>
-            </div>
-            <div className="flex justify-between py-3 border-b border-gray-100">
-              <span className="text-sm text-gray-500">Account Name</span>
-              <span className="font-semibold text-gray-900">{transferData.accountName}</span>
-            </div>
-            <div className="flex justify-between py-3 border-b border-gray-100">
-              <span className="text-sm text-gray-500">Bank</span>
-              <span className="font-semibold text-gray-900">{transferData.bank}</span>
-            </div>
-            <div className="flex justify-between py-3 border-b border-gray-100">
-              <span className="text-sm text-gray-500">Amount</span>
-              <span className="font-semibold text-gray-900">₦{parseFloat(transferData.amount).toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between py-3 border-b border-gray-100">
-              <span className="text-sm text-gray-500">Transaction Fee</span>
-              <span className="font-semibold text-gray-900">₦{transferData.fee.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between py-3">
-              <span className="text-sm font-semibold text-gray-900">Total</span>
-              <span className="font-bold text-gray-900">₦{transferData.total.toLocaleString()}</span>
-            </div>
-            {transferData.narration && (
-              <div className="py-3 border-t border-gray-100">
-                <span className="text-sm text-gray-500 block mb-1">Description</span>
-                <span className="text-gray-900">{transferData.narration}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Confirmation Message */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-xl">
-            <p className="text-sm text-blue-900 text-center">
-              Confirm transaction details before you proceed with payment
+          {/* Recipient Info */}
+          <div className="text-center mb-8">
+            <p className="text-sm text-gray-600 mb-1">
+              Sending money to
+            </p>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {accountName || 'Receiver Account Number'}
+            </h2>
+            <p className="mt-2 text-gray-700">
+              {bank} {accountNumber}
             </p>
           </div>
 
-          {/* Buttons */}
-          <div className="space-y-3">
+          {/* Divider */}
+          <div className="border-t border-blue-600 mb-6" />
+
+          {/* Save Beneficiary */}
+          <div className="flex items-center justify-between mb-6">
+            <span className="text-lg text-gray-900">
+              Add to saved beneficiaries?
+            </span>
+
+            <button
+              onClick={onToggleSave}
+              className={`w-14 h-8 flex items-center rounded-full px-1 transition-colors ${
+                saveBeneficiary ? "bg-blue-900" : "bg-gray-300"
+              }`}
+            >
+              <span
+                className={`w-6 h-6 bg-white rounded-full transition-transform ${
+                  saveBeneficiary ? "translate-x-6" : ""
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div className="border-t border-blue-600 mb-8" />
+
+          {/* Actions */}
+          <div className="space-y-4">
             <button
               onClick={onConfirm}
-              className="w-full py-4 bg-gradient-to-r from-[#0a1952] to-[#1638b8] text-white rounded-xl font-semibold hover:bg-blue-800 transition-colors"
+              className="w-full py-4 rounded-2xl text-white font-semibold text-lg bg-gradient-to-r from-[#0a1952] to-[#1638b8]"
             >
-              Proceed with this transaction
+              Confirm Recipient
             </button>
+
             <button
               onClick={onClose}
-              className="w-1/2 mx-auto flex justify-center  py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="w-full py-4 rounded-2xl border-2 border-blue-900 text-blue-900 font-semibold text-lg hover:bg-blue-50"
             >
               Cancel
             </button>
           </div>
+
         </div>
       </div>
     </div>
   );
 };
+
 
 export default TransferFormNew;

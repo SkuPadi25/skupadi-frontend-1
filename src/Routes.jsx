@@ -23,39 +23,46 @@ import InvoiceSettings from "pages/invoice-settings";
 import MyProfile from "pages/my-profile";
 import Wallet from "pages/wallet";
 import TransferWallet from "pages/transfer-wallet";
-
+import ProtectedRoute from "components/ProtectedRoute";
 import NotFound from "pages/NotFound";
 
 const Routes = () => {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-      <ScrollToTop />
-      <RouterRoutes>
-        {/* Define your routes here */}
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/add-edit-student" element={<AddEditStudent />} />
-        <Route path="/invoices-management" element={<InvoicesManagement />} />
-        <Route path="/create-invoice" element={<CreateInvoice />} />
-        <Route path="/bulk-student-import" element={<BulkStudentImport />} />
-        <Route path="/students-management" element={<StudentsManagement />} />
-        <Route path="/payments-management" element={<PaymentsManagement />} />
-        <Route path="/reports-center" element={<ReportsCenter />} />
-        <Route path="/payment-structure-management" element={<PaymentStructureManagement />} />
-        <Route path="/school-registration" element={<SchoolRegistration />} />
-        <Route path="/school-login" element={<SchoolLogin />} />
-        <Route path="/school-onboarding" element={<OnboardingWizard />} />
-        <Route path="/owner-information" element={<OwnerInformation />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/log-out" element={<LogOut />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/invoice-settings" element={<InvoiceSettings />} />
-        <Route path="/my-profile" element={<MyProfile />} />
-        <Route path="/wallet" element={<Wallet />} />
-        <Route path="/transfer-wallet" element={<TransferWallet />} />
-        <Route path="*" element={<NotFound />} />
-      </RouterRoutes>
+        <ScrollToTop />
+        <RouterRoutes>
+          {/* Define your routes here */}
+          <Route path="/" element={<SchoolLogin />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/add-edit-student" element={<AddEditStudent />} />
+          <Route path="/invoices-management" element={<InvoicesManagement />} />
+          <Route path="/create-invoice" element={<CreateInvoice />} />
+          <Route path="/bulk-student-import" element={<BulkStudentImport />} />
+          <Route path="/students-management" element={<StudentsManagement />} />
+          <Route path="/payments-management" element={<PaymentsManagement />} />
+          <Route path="/reports-center" element={<ReportsCenter />} />
+          <Route path="/payment-structure-management" element={<PaymentStructureManagement />} />
+          <Route path="/school-registration" element={<SchoolRegistration />} />
+          <Route path="/school-login" element={<SchoolLogin />} />
+          <Route path="/school-onboarding" element={<OnboardingWizard />} />
+          <Route path="/owner-information" element={<OwnerInformation />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/log-out" element={<LogOut />} />
+          <Route path="/settings" element={<Settings />} />
+          <Route path="/invoice-settings" element={<InvoiceSettings />} />
+          <Route path="/my-profile" element={<MyProfile />} />
+          <Route path="/wallet" element={<Wallet />} />
+          <Route path="/transfer-wallet" element={<TransferWallet />} />
+          <Route path="*" element={<NotFound />} />
+        </RouterRoutes>
       </ErrorBoundary>
     </BrowserRouter>
   );

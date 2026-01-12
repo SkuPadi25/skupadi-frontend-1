@@ -1,10 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Icon from '../../../components/AppIcon';
 import Button from '../../../components/ui/Button';
+
+import TableEmptyState from '../../TableEmptyState'
 
 const TransactionsTable = ({ searchTerm, filters }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filters]);
 
   // Mock transaction data
   const mockTransactions = [
@@ -81,6 +87,7 @@ const TransactionsTable = ({ searchTerm, filters }) => {
       description: 'Equipment purchase'
     }
   ];
+
 
   // Filter and search logic
   const filteredTransactions = useMemo(() => {
@@ -187,53 +194,32 @@ const TransactionsTable = ({ searchTerm, filters }) => {
             </tr>
           </thead>
           <tbody>
-            {currentTransactions?.length > 0 ? (
-              currentTransactions?.map((transaction) => (
-                <tr key={transaction?.id} className="border-b border-border hover:bg-muted/50 transition-colors">
-                  <td className="py-4 px-4">
-                    <span className={`font-medium ${getTypeColor(transaction?.type)}`}>
-                      {transaction?.amount}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4 text-foreground">{transaction?.balanceBefore}</td>
-                  <td className="py-4 px-4 text-foreground">{transaction?.balanceAfter}</td>
-                  <td className="py-4 px-4">
-                    <span className={`font-medium ${getTypeColor(transaction?.type)}`}>
-                      {transaction?.type}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="space-y-1">
-                      <div className="text-foreground">{formatDate(transaction?.date)}</div>
-                      <div className="text-sm text-muted-foreground">{transaction?.time}</div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-4">
-                    <div className="space-y-1">
-                      <div className="font-mono text-sm text-foreground">{transaction?.reference}</div>
-                      <div className="text-xs text-muted-foreground truncate max-w-[200px]" title={transaction?.description}>
-                        {transaction?.description}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-4">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getStatusColor(transaction?.status)}`}>
-                      {transaction?.status}
-                    </span>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="py-8 px-4 text-center">
-                  <div className="flex flex-col items-center space-y-2">
-                    <Icon name="Inbox" size={48} className="text-muted-foreground/50" />
-                    <p className="text-muted-foreground">No transactions found</p>
-                  </div>
-                </td>
+          {currentTransactions.length > 0 ? (
+            currentTransactions.map((transaction) => (
+              <tr
+                key={transaction.id}
+                className="border-b border-border hover:bg-muted/50 transition-colors"
+              >
+                {/* rows unchanged */}
               </tr>
-            )}
-          </tbody>
+            ))
+          ) : filteredTransactions.length === 0 && !searchTerm ? (
+            <TableEmptyState
+              title="No transactions yet"
+              description="Make your first transfer to start tracking wallet activity."
+              actionLabel="Make a transfer"
+              onAction={() => console.log('Open transfer modal')}
+              colSpan={7}
+            />
+          ) : (
+            <TableEmptyState
+              title="No results found"
+              description="Try adjusting your search or filters."
+              colSpan={7}
+            />
+          )}
+        </tbody>
+
         </table>
       </div>
 

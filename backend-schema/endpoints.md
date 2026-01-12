@@ -1,4 +1,4 @@
-# EduFinance API Endpoints Documentation
+# Skupadi API Endpoints Documentation
 
 ## Authentication & Authorization
 

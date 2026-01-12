@@ -8,134 +8,134 @@ const Sidebar = ({ isOpen, onToggle }) => {
   const navigate = useNavigate();
 
   const navigationItems = [
-  {
-    label: 'Dashboard',
-    path: '/dashboard',
-    icon: 'BarChart3',
-    tooltip: 'Overview and key metrics'
-  },
-  {
-    label: 'Students',
-    path: '/students-management',
-    icon: 'Users',
-    tooltip: 'Student management',
-    children: [
     {
-      label: 'All Students',
+      label: 'Dashboard',
+      path: '/dashboard',
+      icon: 'BarChart3',
+      tooltip: 'Overview and key metrics'
+    },
+    {
+      label: 'Students',
       path: '/students-management',
-      icon: 'Users'
-    },
-    {
-      label: 'Add Student',
-      path: '/add-edit-student',
-      icon: 'UserPlus'
-    },
-    {
-      label: 'Bulk Import',
-      path: '/bulk-student-import',
-      icon: 'Upload'
-    }]
+      icon: 'Users',
+      tooltip: 'Student management',
+      children: [
+        {
+          label: 'All Students',
+          path: '/students-management',
+          icon: 'Users'
+        },
+        {
+          label: 'Add Student',
+          path: '/add-edit-student',
+          icon: 'UserPlus'
+        },
+        {
+          label: 'Bulk Import',
+          path: '/bulk-student-import',
+          icon: 'Upload'
+        }]
 
-  },
-  {
-    label: 'Invoices & Billing',
-    path: '/invoices-management',
-    icon: 'FileText',
-    tooltip: 'Invoice management and billing',
-    children: [
-    {
-      label: 'Create Invoice',
-      path: '/create-invoice',
-      icon: 'Plus',
-      highlight: false,
-      tooltip: 'Create new invoice with grade-based selection'
     },
     {
-      label: 'All Invoices',
+      label: 'Invoices & Billing',
       path: '/invoices-management',
-      icon: 'FileText'
-    }]
+      icon: 'FileText',
+      tooltip: 'Invoice management and billing',
+      children: [
+        {
+          label: 'Create Invoice',
+          path: '/create-invoice',
+          icon: 'Plus',
+          highlight: false,
+          tooltip: 'Create new invoice with grade-based selection'
+        },
+        {
+          label: 'All Invoices',
+          path: '/invoices-management',
+          icon: 'FileText'
+        }]
 
-  },
-  {
-    label: 'Payments',
-    path: '/payments-management',
-    icon: 'CreditCard',
-    tooltip: 'Payment management and fee structures',
-    children: [
+    },
     {
-      label: 'Payment Management',
+      label: 'Payments',
       path: '/payments-management',
-      icon: 'CreditCard'
+      icon: 'CreditCard',
+      tooltip: 'Payment management and fee structures',
+      children: [
+        {
+          label: 'Payment Management',
+          path: '/payments-management',
+          icon: 'CreditCard'
+        },
+        {
+          label: 'Payment Structure',
+          path: '/payment-structure-management',
+          icon: 'Settings'
+        }]
+
     },
     {
-      label: 'Payment Structure',
-      path: '/payment-structure-management',
-      icon: 'Settings'
-    }]
-
-  },
-  {
-    label: 'Wallet',
-    path: '/wallet',
-    icon: 'Wallet',
-    tooltip: 'Wallet management and transfers',
-    children: [
-    {
-      label: 'My Wallet',
+      label: 'Wallet',
       path: '/wallet',
-      icon: 'Wallet'
+      icon: 'Wallet',
+      tooltip: 'Wallet management and transfers',
+      children: [
+        {
+          label: 'My Wallet',
+          path: '/wallet',
+          icon: 'Wallet'
+        },
+        {
+          label: 'Transfer Funds',
+          path: '/transfer-wallet',
+          icon: 'Send'
+        }]
     },
     {
-      label: 'Transfer Funds',
-      path: '/transfer-wallet',
-      icon: 'Send'
-    }]
-  },
-  {
-    label: 'Reports',
-    path: '/reports-center',
-    icon: 'BarChart',
-    tooltip: 'Analytics and reports'
-  },
-  {
-    label: 'Settings',
-    path: '/settings',
-    icon: 'Settings',
-    tooltip: 'Application configuration and preferences',
-    children: [
-    {
-      label: 'School Configuration',
-      path: '/settings?section=school-config',
-      icon: 'School'
+      label: 'Reports',
+      path: '/reports-center',
+      icon: 'BarChart',
+      tooltip: 'Analytics and reports'
     },
     {
-      label: 'User Management',
-      path: '/settings?section=user-management',
-      icon: 'Users'
-    },
-    {
-      label: 'Security & Privacy',
-      path: '/settings?section=security',
-      icon: 'Shield'
-    },
-    {
-      label: 'Notifications',
-      path: '/settings?section=notifications',
-      icon: 'Bell'
-    },
-    {
-      label: 'Integrations',
-      path: '/settings?section=integrations',
-      icon: 'Plug'
-    },
-    {
-      label: 'Backup & Export',
-      path: '/settings?section=backup',
-      icon: 'Download'
-    }]
+      label: 'Settings',
+      path: '/settings',
+      icon: 'Settings',
+      tooltip: 'Application configuration and preferences',
+      children: [
+        {
+          label: 'School Configuration',
+          path: '/settings?section=school-config',
+          icon: 'School'
+        },
+        {
+          label: 'User Management',
+          path: '/settings?section=user-management',
+          icon: 'Users'
+        },
+        {
+          label: 'Security & Privacy',
+          path: '/settings?section=security',
+          icon: 'Shield'
+        },
+        {
+          label: 'Notifications',
+          path: '/settings?section=notifications',
+          icon: 'Bell'
+        },
+        {
+          label: 'Integrations',
+          path: '/settings?section=integrations',
+          icon: 'Plug'
+        },
+        {
+          label: 'Backup & Export',
+          path: '/settings?section=backup',
+          icon: 'Download'
+        }]
 
-  }];
+    }];
 
 
   const [expandedSections, setExpandedSections] = useState({
@@ -177,9 +177,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
     <>
       {/* Mobile Overlay */}
       {isOpen &&
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
-        onClick={onToggle} />
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={onToggle} />
 
       }
       {/* Sidebar */}
@@ -196,9 +196,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
         <div className="flex items-center justify-between p-6 border-b border-gray-600">
           <div className="flex items-center justify-center w-full">
             <div className="w-72 h-24 flex items-center justify-center">
-              <img 
-                src="/assets/images/SkuPadi_Logo-removebg-preview_1-1758104649539.png" 
-                alt="Skupadi Logo" 
+              <img
+                src="/assets/images/sk1e.png"
+                alt="Skupadi Logo"
                 className="w-72 h-auto max-h-24 object-contain"
                 onError={(e) => {
                   // Fallback to icon if image fails to load
@@ -208,7 +208,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
               />
             </div>
           </div>
-          
+
           {/* Mobile Close Button */}
           <button
             onClick={onToggle}
@@ -223,12 +223,12 @@ const Sidebar = ({ isOpen, onToggle }) => {
           <SchoolSelector />
         </div> }
         */}
-        
+
 
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {navigationItems?.map((item) =>
-          <div key={item?.label}>
+            <div key={item?.label}>
               {/* Main Navigation Item */}
               <div className="relative">
                 {item?.children ?
@@ -242,19 +242,19 @@ const Sidebar = ({ isOpen, onToggle }) => {
                     `}
                     title={item?.tooltip}
                     style={isParentActive(item) ? { backgroundColor: '#EAEBEF' } : {}}>
-                      
-                      <div className="flex items-center space-x-3">
-                        <Icon
-                          name={item?.icon}
-                          size={18}
-                          color={isParentActive(item) ? '#081C48' : 'currentColor'} />
-                        <span>{item?.label}</span>
-                      </div>
+
+                    <div className="flex items-center space-x-3">
                       <Icon
-                        name={expandedSections?.[item?.label] ? 'ChevronDown' : 'ChevronRight'}
-                        size={16}
+                        name={item?.icon}
+                        size={18}
                         color={isParentActive(item) ? '#081C48' : 'currentColor'} />
-                    </button> :
+                      <span>{item?.label}</span>
+                    </div>
+                    <Icon
+                      name={expandedSections?.[item?.label] ? 'ChevronDown' : 'ChevronRight'}
+                      size={16}
+                      color={isParentActive(item) ? '#081C48' : 'currentColor'} />
+                  </button> :
 
                   <Link
                     to={item?.path}
@@ -266,13 +266,13 @@ const Sidebar = ({ isOpen, onToggle }) => {
                     `}
                     title={item?.tooltip}
                     style={isActiveRoute(item?.path) ? { backgroundColor: '#EAEBEF' } : {}}>
-                      
-                      <Icon
-                        name={item?.icon}
-                        size={18}
-                        color={isActiveRoute(item?.path) ? '#081C48' : 'currentColor'} />
-                      <span>{item?.label}</span>
-                    </Link>
+
+                    <Icon
+                      name={item?.icon}
+                      size={18}
+                      color={isActiveRoute(item?.path) ? '#081C48' : 'currentColor'} />
+                    <span>{item?.label}</span>
+                  </Link>
                 }
               </div>
 
@@ -293,22 +293,22 @@ const Sidebar = ({ isOpen, onToggle }) => {
                       `}
                       title={child?.tooltip}
                       style={isActiveRoute(child?.path) ? { backgroundColor: '#EAEBEF' } : {}}>
-                        
-                        <Icon
-                          name={child?.icon}
-                          size={16}
-                          color={child?.highlight && !isActiveRoute(child?.path) ?
-                            '#059669' : isActiveRoute(child?.path) ? '#081C48' : 'currentColor'
-                          } />
-                        <span className={child?.highlight ? 'font-medium' : ''}>
-                          {child?.label}
+
+                      <Icon
+                        name={child?.icon}
+                        size={16}
+                        color={child?.highlight && !isActiveRoute(child?.path) ?
+                          '#059669' : isActiveRoute(child?.path) ? '#081C48' : 'currentColor'
+                        } />
+                      <span className={child?.highlight ? 'font-medium' : ''}>
+                        {child?.label}
+                      </span>
+                      {child?.highlight &&
+                        <span className="ml-auto">
+                          <Icon name="Sparkles" size={12} color="#059669" />
                         </span>
-                        {child?.highlight &&
-                          <span className="ml-auto">
-                            <Icon name="Sparkles" size={12} color="#059669" />
-                          </span>
-                        }
-                      </Link>
+                      }
+                    </Link>
                   )}
                 </div>
               }
@@ -329,7 +329,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
               <span>Log Out</span>
             </button>
           </div>
-          
+
           {/* Copyright */}
           <div className="p-4 pt-0">
             <div className="text-xs text-white font-bold text-center">

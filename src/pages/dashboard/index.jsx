@@ -16,6 +16,8 @@ import RecentActivity from './components/RecentActivity';
 import QuickActions from './components/QuickActions';
 import DateRangeFilter from './components/DateRangeFilter';
 
+// import { apiService } from 'services/api';
+
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState('7days');
@@ -30,12 +32,16 @@ const Dashboard = () => {
     console.log('Date range changed to:', range);
   };
 
-  // Mock user data
-  const currentUser = {
-    name: 'Sarah Mitchell',
-    role: 'School Administrator',
-    avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face'
-  };
+  const storedUser = localStorage.getItem("user");
+
+  const currentUser = storedUser
+  ? {
+      name: `${storedUser.firstName} ${storedUser.lastName}`,
+      role: storedUser.role,
+      avatar: storedUser.avatar ?? "/default-avatar.png"
+    }
+  : null;
+
 
   // KPI data
   const kpiData = [

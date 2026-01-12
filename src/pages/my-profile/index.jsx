@@ -26,32 +26,15 @@ const MyProfile = () => {
   };
 
   // Mock current user data - in real app get from auth context/service
-  const currentUser = {
-    id: '1',
-    name: 'Sarah Mitchell',
-    email: 'sarah.mitchell@edufinance.com',
-    role: 'School Administrator',
-    phone: '+234 901 234 5678',
-    profilePicture: null,
-    joinDate: '2023-01-15',
-    lastLogin: '2024-01-09 14:30:00',
-    school: {
-      name: 'Greenwood International Academy',
-      location: 'Lagos, Nigeria'
-    },
-    preferences: {
-      theme: 'system',
-      language: 'en',
-      timezone: 'Africa/Lagos',
-      dateFormat: 'dd/mm/yyyy',
-      currency: 'NGN',
-      notifications: {
-        email: true,
-        push: true,
-        sms: false
-      }
+  const storedUser = localStorage.getItem("user");
+
+  const currentUser = storedUser
+  ? {
+      name: `${storedUser.firstName} ${storedUser.lastName}`,
+      role: storedUser.role,
+      avatar: storedUser.avatar ?? "/default-avatar.png"
     }
-  };
+  : null;
 
   // Profile picture upload handler
   const handlePictureUpload = async (event) => {
