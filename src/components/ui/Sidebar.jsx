@@ -147,11 +147,19 @@ const Sidebar = ({ isOpen, onToggle }) => {
   });
 
   const toggleSection = (sectionLabel) => {
-    setExpandedSections((prev) => ({
-      ...prev,
-      [sectionLabel]: !prev?.[sectionLabel]
-    }));
-  };
+  setExpandedSections((prev) => {
+    const isCurrentlyOpen = prev?.[sectionLabel];
+
+    return {
+      Students: false,
+      'Invoices & Billing': false,
+      Payments: false,
+      Wallet: false,
+      Settings: false,
+      [sectionLabel]: !isCurrentlyOpen
+        };
+      });
+    };
 
   const isActiveRoute = (path) => {
     // Handle both exact path matches and query parameter matches
@@ -226,7 +234,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto elegant-scroll">
           {navigationItems?.map((item) =>
             <div key={item?.label}>
               {/* Main Navigation Item */}

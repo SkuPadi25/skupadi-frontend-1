@@ -80,7 +80,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background elegant-scroll">
       <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
       <div className="lg:ml-64">
         <Header onMenuToggle={toggleSidebar} user={currentUser} />
