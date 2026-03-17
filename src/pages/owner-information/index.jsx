@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { submitOwnerInfo } from "../../services/onboardingService";
+import { useAuth } from "../../contexts/AuthContext";
 import {
   getRegistration,
   getSchoolId,
@@ -9,6 +10,7 @@ import { Upload, ArrowLeft } from "lucide-react";
 
 const OwnerInformation = () => {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   const [formData, setFormData] = useState({
     bvn: "",
@@ -29,12 +31,12 @@ const OwnerInformation = () => {
     const schoolId = getSchoolId();
 
     if (!reg) {
-      navigate("/signup");
+      navigate("/school-registration", { replace: true });
       return;
     }
 
     if (!schoolId) {
-      navigate("/school-onboarding");
+      navigate("/school-onboarding", { replace: true });
     }
   }, [navigate]);
 
@@ -74,11 +76,22 @@ const OwnerInformation = () => {
      ================================ */
   const validateForm = () => {
     const e = {};
-    if (formData.bvn.length !== 11) e.bvn = "BVN must be 11 digits";
-    if (!formData.settlementBankName)
-      e.settlementBankName = "Bank name required";
-    if (formData.accountNumber.length !== 10)
-      e.accountNumber = "Account number must be 10 digits";
+    const hasBvn = Boolean(formData.bvn);
+    const hasBankName = Boolean(formData.settlementBankName.trim());
+    const hasAccountNumber = Boolean(formData.accountNumber);
+    const hasAnyBankDetails = hasBvn || hasBankName || hasAccountNumber;
+
+    if (hasAnyBankDetails) {
+      if (!hasBvn) e.bvn = "BVN is required when adding bank details";
+      else if (formData.bvn.length !== 11) e.bvn = "BVN must be 11 digits";
+
+      if (!hasBankName) e.settlementBankName = "Bank name required";
+
+      if (!hasAccountNumber) e.accountNumber = "Account number required";
+      else if (formData.accountNumber.length !== 10) {
+        e.accountNumber = "Account number must be 10 digits";
+      }
+    }
 
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -107,10 +120,11 @@ const OwnerInformation = () => {
         accountNumber: formData.accountNumber,
       };
 
-      await submitOwnerInfo(payload);
+      const result = await submitOwnerInfo(payload);
+      setUser(result?.user || null);
 
       // tokens + user already saved by service
-      navigate("/dashboard");
+      navigate("/dashboard", { replace: true });
     } catch (err) {
       console.error(err);
       setErrors({

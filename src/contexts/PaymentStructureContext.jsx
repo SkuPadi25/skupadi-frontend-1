@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import api from '../services/api';
 
 // Create the context
 const PaymentStructureContext = createContext();
@@ -40,14 +41,9 @@ export const PaymentStructureProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [integrationStatus, setIntegrationStatus] = useState({});
 
-  // Initialize payment structures with mock data
+  // Load payment structures from the API
   useEffect(() => {
-    // Add a small delay to ensure router is initialized
-    const timer = setTimeout(() => {
-      loadPaymentStructures();
-    }, 100);
-
-    return () => clearTimeout(timer);
+    loadPaymentStructures();
   }, []);
 
   // Load payment structures and plans
@@ -56,137 +52,35 @@ export const PaymentStructureProvider = ({ children }) => {
     setError(null);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockPaymentStructures = {
-        nursery_1: [
-          {
-            id: 1,
-            name: 'Tuition Fee',
-            amount: 65000,
-            frequency: 'termly',
-            category: 'academic',
-            mandatory: true,
-            description: 'Standard tuition fee for Nursery 1',
-            integrationStatus: 'active',
-            pendingInvoices: 8
-          },
-          {
-            id: 2,
-            name: 'School Bus',
-            amount: 20000,
-            frequency: 'termly',
-            category: 'transportation',
-            mandatory: false,
-            description: 'Transportation fee for school bus service',
-            integrationStatus: 'active',
-            pendingInvoices: 5
-          }
-        ],
-        primary_1: [
-          {
-            id: 3,
-            name: 'Tuition Fee',
-            amount: 85000,
-            frequency: 'termly',
-            category: 'academic',
-            mandatory: true,
-            description: 'Standard tuition fee for Primary 1',
-            integrationStatus: 'active',
-            pendingInvoices: 12
-          },
-          {
-            id: 4,
-            name: 'School Bus',
-            amount: 25000,
-            frequency: 'termly',
-            category: 'transportation',
-            mandatory: false,
-            description: 'Transportation fee for school bus service',
-            integrationStatus: 'active',
-            pendingInvoices: 8
-          },
-          {
-            id: 5,
-            name: 'Exam Fee',
-            amount: 15000,
-            frequency: 'termly',
-            category: 'academic',
-            mandatory: true,
-            description: 'Examination processing fee',
-            integrationStatus: 'active',
-            pendingInvoices: 0
-          }
-        ],
-        primary_2: [
-          {
-            id: 6,
-            name: 'Tuition Fee',
-            amount: 87000,
-            frequency: 'termly',
-            category: 'academic',
-            mandatory: true,
-            description: 'Standard tuition fee for Primary 2',
-            integrationStatus: 'active',
-            pendingInvoices: 15
-          }
-        ],
-        jss_1: [
-          {
-            id: 7,
-            name: 'Tuition Fee',
-            amount: 120000,
-            frequency: 'termly',
-            category: 'academic',
-            mandatory: true,
-            description: 'Standard tuition fee for JSS 1',
-            integrationStatus: 'active',
-            pendingInvoices: 20
-          },
-          {
-            id: 8,
-            name: 'Laboratory Fee',
-            amount: 35000,
-            frequency: 'termly',
-            category: 'academic',
-            mandatory: true,
-            description: 'Science laboratory access and materials',
-            integrationStatus: 'active',
-            pendingInvoices: 18
-          }
-        ]
-      };
+      const { data } = await api.get('/payment-structures');
+      const structures = data?.paymentStructures || [];
+      const groupedStructures = structures?.reduce((acc, structure) => {
+        const classId = structure?.classId;
+        if (!acc?.[classId]) {
+          acc[classId] = [];
+        }
 
-      setPaymentStructures(mockPaymentStructures);
-      
-      // Load school-level installment configuration (replace individual payment plans)
-      const mockSchoolInstallmentConfig = {
-        enabled: true,
-        maxInstallments: 3,
-        termly: true,
-        allowedInstallments: [1, 2, 3],
-        gracePeriodDays: 7,
-        lateFeeAmount: 5000,
-        downPaymentRequired: false,
-        downPaymentPercentage: 20,
-        installmentFrequency: 'monthly',
-        applyToAllInvoices: true,
-        defaultInstallmentPlan: {
-          numberOfInstallments: 3,
-          installmentType: 'equal_split',
-          description: 'School-wide termly installment plan - Maximum 3 installments per term'
-        },
-        lastUpdated: new Date()?.toISOString(),
-        createdBy: 'School Administrator'
-      };
+        acc[classId]?.push({
+          id: structure?.id,
+          name: structure?.name,
+          amount: Number(structure?.amount || 0),
+          frequency: structure?.frequency || 'termly',
+          category: structure?.category || 'other',
+          mandatory: structure?.mandatory !== false,
+          description: structure?.description || '',
+          className: structure?.class?.name || '',
+          integrationStatus: structure?.isActive === false ? 'inactive' : 'active',
+          pendingInvoices: 0
+        });
 
-      setSchoolInstallmentConfig(mockSchoolInstallmentConfig);
-      
-      // Track integration status with enhanced error handling
+        return acc;
+      }, {});
+
+      setPaymentStructures(groupedStructures || {});
+
       const status = {};
-      Object.keys(mockPaymentStructures || {})?.forEach(classId => {
-        const classStructures = mockPaymentStructures?.[classId];
+      Object.keys(groupedStructures || {})?.forEach(classId => {
+        const classStructures = groupedStructures?.[classId];
         if (classStructures && Array.isArray(classStructures)) {
           status[classId] = {
             totalFees: classStructures?.length || 0,
@@ -200,7 +94,8 @@ export const PaymentStructureProvider = ({ children }) => {
       setIntegrationStatus(status);
       
     } catch (err) {
-      setError('Failed to load payment structures and installment configuration');
+      setPaymentStructures({});
+      setError('Failed to load payment structures');
       console.error('Error loading payment structures:', err);
     } finally {
       setLoading(false);
@@ -658,24 +553,13 @@ export const PaymentStructureProvider = ({ children }) => {
   // Helper function to get class name from ID
   const getClassNameFromId = (classId) => {
     if (!classId || typeof classId !== 'string') return classId || 'Unknown';
-    
-    const classMapping = {
-      nursery_1: 'Nursery 1',
-      nursery_2: 'Nursery 2',
-      primary_1: 'Primary 1',
-      primary_2: 'Primary 2',
-      primary_3: 'Primary 3',
-      primary_4: 'Primary 4',
-      primary_5: 'Primary 5',
-      primary_6: 'Primary 6',
-      jss_1: 'JSS 1',
-      jss_2: 'JSS 2',
-      jss_3: 'JSS 3',
-      ss_1: 'SS 1',
-      ss_2: 'SS 2',
-      ss_3: 'SS 3'
-    };
-    return classMapping?.[classId] || classId;
+
+    const classStructures = paymentStructures?.[classId];
+    if (Array.isArray(classStructures) && classStructures?.[0]?.className) {
+      return classStructures?.[0]?.className;
+    }
+
+    return classId;
   };
 
   // Updated context value with new school-level installment methods

@@ -15,31 +15,7 @@ const InvoiceTable = ({ invoices, onSort, sortConfig, onBulkAction }) => {
   const [bulkPDFStatus, setBulkPDFStatus] = useState(null);
   const itemsPerPage = 10;
 
-  // Use provided invoices or fallback to mock data for development
-  const displayInvoices = invoices || [
-    {
-      id: "INV-2025-001",
-      studentName: "Emma Johnson",
-      studentId: "STU-001",
-      amount: 500000.00,
-      dueDate: "2025-01-15",
-      issueDate: "2024-12-15",
-      status: "paid",
-      class: "Grade 10",
-      paymentDate: "2025-01-10"
-    },
-    {
-      id: "INV-2025-002",
-      studentName: "Michael Chen",
-      studentId: "STU-002",
-      amount: 580000.00,
-      dueDate: "2025-01-20",
-      issueDate: "2024-12-20",
-      status: "overdue",
-      class: "Grade 11",
-      paymentDate: null
-    }
-  ];
+  const displayInvoices = invoices || [];
 
   const totalPages = Math?.ceil(displayInvoices?.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -50,22 +26,10 @@ const InvoiceTable = ({ invoices, onSort, sortConfig, onBulkAction }) => {
     setCurrentPage(1);
   }, [invoices]);
 
-  // Mock parent contact information - in a real app, this would come from the student/parent database
   const getParentContact = (invoice) => {
-    const parentContacts = {
-      'INV-2025-001': { email: 'emma.johnson@parent.com', phone: '+2348123456701' },
-      'INV-2025-002': { email: 'michael.chen@parent.com', phone: '+2348123456702' },
-      'INV-2025-003': { email: 'sarah.williams@parent.com', phone: '+2348123456703' },
-      'INV-2025-004': { email: 'david.rodriguez@parent.com', phone: '+2348123456704' },
-      'INV-2025-005': { email: 'lisa.anderson@parent.com', phone: '+2348123456705' },
-      'INV-2025-006': { email: 'james.wilson@parent.com', phone: '+2348123456706' },
-      'INV-2025-007': { email: 'maria.garcia@parent.com', phone: '+2348123456707' },
-      'INV-2025-008': { email: 'robert.taylor@parent.com', phone: '+2348123456708' }
-    };
-    
-    return parentContacts?.[invoice?.id] || {
-      email: 'parent@example.com',
-      phone: '+2348123456789'
+    return {
+      email: invoice?.parentEmail || '',
+      phone: invoice?.parentPhone || ''
     };
   };
 

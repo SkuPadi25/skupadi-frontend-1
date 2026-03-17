@@ -96,7 +96,7 @@ const SchoolLogin = () => {
         : { phone: input, password: formData.password };
 
       const loggedInUser = await login(payload); // ← real backend call
-      setUser(loggedInUser);
+      setUser(loggedInUser?.user || null);
 
     } catch (err) {
       console.error("Login failed:", err);

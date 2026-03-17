@@ -12,7 +12,8 @@ const StudentSelection = ({
   isBulkMode, 
   onToggleBulkMode,
   selectedClasses = [],
-  autoPopulatedFeesCount = 0
+  autoPopulatedFeesCount = 0,
+  onGradeModeChange = null
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allStudents, setAllStudents] = useState([]);
@@ -50,13 +51,15 @@ const StudentSelection = ({
 
   // Handle grade-based selection
   const handleGradeSelection = (gradeId, gradeInfo, gradeStudents) => {
+    const updatedExceptions = { ...studentExceptions };
     const studentsWithoutExceptions = gradeStudents
-      ?.filter(student => !studentExceptions?.[student?.id])
+      ?.filter(student => !updatedExceptions?.[student?.id])
       ?.map(student => student?.id);
     
     onStudentChange(studentsWithoutExceptions);
     setIsGradeMode(true);
     setCurrentGradeInfo(gradeInfo);
+    onGradeModeChange?.(true, gradeInfo, updatedExceptions);
   };
 
   // Handle student exception toggle
@@ -77,6 +80,7 @@ const StudentSelection = ({
     }
     
     setStudentExceptions(updatedExceptions);
+    onGradeModeChange?.(isGradeMode, currentGradeInfo, updatedExceptions);
   };
 
   // Reset grade mode when switching modes
@@ -86,6 +90,7 @@ const StudentSelection = ({
       setIsGradeMode(false);
       setCurrentGradeInfo(null);
       setStudentExceptions({});
+      onGradeModeChange?.(false, null, {});
     }
   };
 
@@ -174,6 +179,7 @@ const StudentSelection = ({
                 setCurrentGradeInfo(null);
                 setStudentExceptions({});
                 onStudentChange([]);
+                onGradeModeChange?.(false, null, {});
               }}
               iconName="X"
               iconPosition="left"

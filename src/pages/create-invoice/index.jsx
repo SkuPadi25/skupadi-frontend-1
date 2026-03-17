@@ -9,6 +9,8 @@ import { usePaymentStructure } from '../../contexts/PaymentStructureContext';
 import { dynamicFeeService } from '../../services/dynamicFeeService';
 import { studentClassService } from '../../services/studentClassService';
 import { integrationStatusUtils } from '../../utils/integrationStatus';
+import { getUser } from '../../utils/storage';
+import invoiceService from '../../services/invoiceService';
 
 import StudentSelection from './components/StudentSelection';
 import InvoiceDetails from './components/InvoiceDetails';
@@ -186,14 +188,20 @@ const CreateInvoice = () => {
     setIsLoading(true);
     
     try {
-      // Update integration status
+      const result = await invoiceService?.createInvoices({
+        invoiceNumber: invoiceData?.invoiceNumber,
+        dueDate: invoiceData?.dueDate,
+        description: invoiceData?.description,
+        paymentTerms: invoiceData?.paymentTerms,
+        notes: invoiceData?.notes,
+        selectedStudentIds: selectedStudents,
+        lineItems
+      });
+
       integrationStatusUtils?.updateIntegrationStatusAfterInvoice(paymentStructureContext, lineItems);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
       // Enhanced success message for grade mode
-      const invoiceCount = selectedStudents?.length;
+      const invoiceCount = result?.count || selectedStudents?.length;
       const totalAmount = lineItems?.reduce((sum, item) => {
         const itemTotal = (item?.quantity || 0) * (item?.unitPrice || 0);
         return sum + itemTotal;
@@ -224,11 +232,23 @@ const CreateInvoice = () => {
   };
 
   const handleSaveDraft = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
     setIsLoading(true);
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await invoiceService?.createInvoices({
+        invoiceNumber: invoiceData?.invoiceNumber,
+        dueDate: invoiceData?.dueDate,
+        description: invoiceData?.description,
+        paymentTerms: invoiceData?.paymentTerms,
+        notes: invoiceData?.notes,
+        status: 'DRAFT',
+        selectedStudentIds: selectedStudents,
+        lineItems
+      });
       
       alert('Invoice saved as draft successfully');
       navigate('/invoices-management');
@@ -295,16 +315,17 @@ const CreateInvoice = () => {
     ));
   };
 
-  const mockUser = {
-    name: 'Sarah Johnson',
-    role: 'Finance Administrator'
-  };
+  const currentUser = getUser();
+  const headerUser = currentUser ? {
+    name: `${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`?.trim() || currentUser?.email,
+    role: currentUser?.role
+  } : null;
 
   return (
     <div className="min-h-screen bg-background">
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
       <div className="lg:ml-64">
-        <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} user={mockUser} />
+        <Header onMenuToggle={() => setSidebarOpen(!sidebarOpen)} user={headerUser} />
         
         <main className="p-6">
           <Breadcrumb customItems={[]} />

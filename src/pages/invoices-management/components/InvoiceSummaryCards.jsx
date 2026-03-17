@@ -1,43 +1,40 @@
 import React from 'react';
 import Icon from '../../../components/AppIcon';
 
-const InvoiceSummaryCards = () => {
+const formatCurrency = (amount) => new Intl.NumberFormat('en-NG', {
+  style: 'currency',
+  currency: 'NGN'
+})?.format(Number(amount || 0));
+
+const InvoiceSummaryCards = ({ summary }) => {
   const summaryData = [
     {
       id: 1,
-      title: "Total Invoices",
-      value: "1,247",
-      change: "+12%",
-      changeType: "positive",
-      icon: "FileText",
-      color: "bg-blue-500"
+      title: 'Total Invoices',
+      value: summary?.totalInvoices ?? 0,
+      icon: 'FileText',
+      color: 'bg-blue-500'
     },
     {
       id: 2,
-      title: "Outstanding Amount",
-      value: "₦45,280",
-      change: "-8%",
-      changeType: "negative",
-      icon: "Banknote",
-      color: "bg-amber-500"
+      title: 'Outstanding Amount',
+      value: formatCurrency(summary?.outstandingAmount),
+      icon: 'Banknote',
+      color: 'bg-amber-500'
     },
     {
       id: 3,
-      title: "Collection Rate",
-      value: "87.5%",
-      change: "+5%",
-      changeType: "positive",
-      icon: "TrendingUp",
-      color: "bg-green-500"
+      title: 'Collection Rate',
+      value: `${Number(summary?.collectionRate || 0)?.toFixed(1)}%`,
+      icon: 'TrendingUp',
+      color: 'bg-green-500'
     },
     {
       id: 4,
-      title: "Overdue Invoices",
-      value: "156",
-      change: "-15%",
-      changeType: "positive",
-      icon: "AlertTriangle",
-      color: "bg-red-500"
+      title: 'Overdue Invoices',
+      value: summary?.overdueInvoices ?? 0,
+      icon: 'AlertTriangle',
+      color: 'bg-red-500'
     }
   ];
 
@@ -53,19 +50,6 @@ const InvoiceSummaryCards = () => {
               <p className="text-2xl font-semibold text-foreground">
                 {item?.value}
               </p>
-              <div className="flex items-center mt-2">
-                <Icon 
-                  name={item?.changeType === 'positive' ? 'TrendingUp' : 'TrendingDown'} 
-                  size={14} 
-                  color={item?.changeType === 'positive' ? '#10b981' : '#ef4444'} 
-                />
-                <span className={`text-sm ml-1 ${
-                  item?.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                }`}>
-                  {item?.change}
-                </span>
-                <span className="text-sm text-muted-foreground ml-1">vs last month</span>
-              </div>
             </div>
             <div className={`w-12 h-12 ${item?.color} rounded-lg flex items-center justify-center`}>
               <Icon name={item?.icon} size={24} color="white" />

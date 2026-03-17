@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../../components/ui/Sidebar';
 import Header from '../../components/ui/Header';
@@ -11,126 +11,32 @@ import InvoiceFilters from './components/InvoiceFilters';
 import InvoiceTable from './components/InvoiceTable';
 import SpecialInvoiceTab from './components/SpecialInvoiceTab';
 import exportService from '../../services/exportService';
+import invoiceService from '../../services/invoiceService';
+import { getUser } from '../../utils/storage';
 
 const InvoicesManagement = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('regular'); // 'regular' or 'special'
   const [filters, setFilters] = useState({});
   const [sortConfig, setSortConfig] = useState({ key: 'dueDate', direction: 'desc' });
+  const [allInvoices, setAllInvoices] = useState([]);
+  const [summary, setSummary] = useState(null);
 
-  // Mock data - in a real app, this would come from API/database
-  const allInvoices = [
-    {
-      id: "INV-2025-001",
-      studentName: "Emma Johnson",
-      studentId: "STU-001",
-      amount: 500000.00,
-      dueDate: "2025-01-15",
-      issueDate: "2024-12-15",
-      status: "paid",
-      class: "Grade 10",
-      paymentDate: "2025-01-10"
-    },
-    {
-      id: "INV-2025-002",
-      studentName: "Michael Chen",
-      studentId: "STU-002",
-      amount: 580000.00,
-      dueDate: "2025-01-20",
-      issueDate: "2024-12-20",
-      status: "overdue",
-      class: "Grade 11",
-      paymentDate: null
-    },
-    {
-      id: "INV-2025-003",
-      studentName: "Sarah Williams",
-      studentId: "STU-003",
-      amount: 540000.00,
-      dueDate: "2025-01-25",
-      issueDate: "2024-12-25",
-      status: "pending",
-      class: "Grade 9",
-      paymentDate: null
-    },
-    {
-      id: "INV-2025-004",
-      studentName: "David Rodriguez",
-      studentId: "STU-004",
-      amount: 480000.00,
-      dueDate: "2025-01-30",
-      issueDate: "2024-12-30",
-      status: "paid",
-      class: "Grade 12",
-      paymentDate: "2025-01-28"
-    },
-    {
-      id: "INV-2025-005",
-      studentName: "Lisa Anderson",
-      studentId: "STU-005",
-      amount: 560000.00,
-      dueDate: "2025-02-05",
-      issueDate: "2025-01-05",
-      status: "pending",
-      class: "Grade 8",
-      paymentDate: null
-    },
-    {
-      id: "INV-2025-006",
-      studentName: "James Wilson",
-      studentId: "STU-006",
-      amount: 520000.00,
-      dueDate: "2025-02-10",
-      issueDate: "2025-01-10",
-      status: "overdue",
-      class: "Grade 7",
-      paymentDate: null
-    },
-    {
-      id: "INV-2025-007",
-      studentName: "Maria Garcia",
-      studentId: "STU-007",
-      amount: 600000.00,
-      dueDate: "2025-02-15",
-      issueDate: "2025-01-15",
-      status: "paid",
-      class: "Grade 6",
-      paymentDate: "2025-02-12"
-    },
-    {
-      id: "INV-2025-008",
-      studentName: "Robert Taylor",
-      studentId: "STU-008",
-      amount: 500000.00,
-      dueDate: "2025-02-20",
-      issueDate: "2025-01-20",
-      status: "pending",
-      class: "Grade 5",
-      paymentDate: null
-    },
-    {
-      id: "INV-2025-009",
-      studentName: "Jessica Brown",
-      studentId: "STU-009",
-      amount: 450000.00,
-      dueDate: "2025-02-25",
-      issueDate: "2025-01-25",
-      status: "overdue",
-      class: "Grade 4",
-      paymentDate: null
-    },
-    {
-      id: "INV-2025-010",
-      studentName: "Kevin Davis",
-      studentId: "STU-010",
-      amount: 620000.00,
-      dueDate: "2025-03-01",
-      issueDate: "2025-02-01",
-      status: "pending",
-      class: "Grade 3",
-      paymentDate: null
-    }
-  ];
+  useEffect(() => {
+    const loadInvoices = async () => {
+      try {
+        const result = await invoiceService?.getInvoices();
+        setAllInvoices(result?.invoices || []);
+        setSummary(result?.summary);
+      } catch (error) {
+        console.error('Failed to load invoices:', error);
+        setAllInvoices([]);
+        setSummary(null);
+      }
+    };
+
+    loadInvoices();
+  }, []);
 
   // Apply filters and sorting to get filtered invoices
   const filteredInvoices = useMemo(() => {
@@ -241,10 +147,11 @@ const InvoicesManagement = () => {
     return filtered;
   }, [filters, sortConfig]);
 
-  const user = {
-    name: "Sarah Johnson",
-    role: "Finance Administrator"
-  };
+  const currentUser = getUser();
+  const user = currentUser ? {
+    name: `${currentUser?.firstName || ''} ${currentUser?.lastName || ''}`?.trim() || currentUser?.email,
+    role: currentUser?.role
+  } : null;
 
   const handleFiltersChange = (newFilters) => {
     setFilters(newFilters);
@@ -404,7 +311,7 @@ const InvoicesManagement = () => {
           {/* Tab Content */}
           {activeTab === 'regular' ? (
             <>
-              <InvoiceSummaryCards />
+              <InvoiceSummaryCards summary={summary} />
 
               <InvoiceFilters
                 onFiltersChange={handleFiltersChange}

@@ -6,7 +6,6 @@ import PageHeader from '../../components/ui/PageHeader';
 import Button from '../../components/ui/Button';
 import Icon from '../../components/AppIcon';
 
-// Import dashboard components
 import KPICard from './components/KPICard';
 import MonthlyRevenueChart from './components/MonthlyRevenueChart';
 import PayByClassChart from './components/PayByClassChart';
@@ -15,12 +14,20 @@ import InvoiceStatusChart from './components/InvoiceStatusChart';
 import RecentActivity from './components/RecentActivity';
 import QuickActions from './components/QuickActions';
 import DateRangeFilter from './components/DateRangeFilter';
-
-// import { apiService } from 'services/api';
+import dashboardService from '../../services/dashboardService';
+import { getUser } from '../../utils/storage';
 
 const Dashboard = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState('7days');
+  const [dashboardData, setDashboardData] = useState({
+    kpis: [],
+    monthlyRevenue: [],
+    invoiceStatus: [],
+    payByClass: [],
+    priorityInvoices: [],
+    recentActivity: []
+  });
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -28,68 +35,53 @@ const Dashboard = () => {
 
   const handleDateRangeChange = (range) => {
     setSelectedDateRange(range);
-    // Here you would typically refetch data based on the selected range
-    console.log('Date range changed to:', range);
   };
 
-  const storedUser = localStorage.getItem("user");
+  useEffect(() => {
+    const loadDashboard = async () => {
+      try {
+        const data = await dashboardService?.getDashboardData(selectedDateRange);
+        setDashboardData({
+          kpis: data?.kpis || [],
+          monthlyRevenue: data?.monthlyRevenue || [],
+          invoiceStatus: data?.invoiceStatus || [],
+          payByClass: data?.payByClass || [],
+          priorityInvoices: data?.priorityInvoices || [],
+          recentActivity: data?.recentActivity || []
+        });
+      } catch (error) {
+        console.error('Failed to load dashboard data:', error);
+        setDashboardData({
+          kpis: [],
+          monthlyRevenue: [],
+          invoiceStatus: [],
+          payByClass: [],
+          priorityInvoices: [],
+          recentActivity: []
+        });
+      }
+    };
 
-  const currentUser = storedUser
-  ? {
-      name: `${storedUser.firstName} ${storedUser.lastName}`,
-      role: storedUser.role,
-      avatar: storedUser.avatar ?? "/default-avatar.png"
-    }
-  : null;
+    loadDashboard();
+  }, [selectedDateRange]);
 
-
-  // KPI data
-  const kpiData = [
-    {
-      title: 'Total Students',
-      value: '1,420',
-      change: '+5.2%',
-      changeType: 'positive',
-      icon: 'Users',
-      color: 'primary'
-    },
-    {
-      title: 'Outstanding Fees',
-      value: '₦48,250',
-      change: '-12.3%',
-      changeType: 'positive',
-      icon: 'Banknote',
-      color: 'warning'
-    },
-    {
-      title: 'Monthly Revenue',
-      value: '₦58,000',
-      change: '+8.1%',
-      changeType: 'positive',
-      icon: 'TrendingUp',
-      color: 'success'
-    },
-    {
-      title: 'Collection Rate',
-      value: '94.2%',
-      change: '+2.1%',
-      changeType: 'positive',
-      icon: 'Target',
-      color: 'accent'
-    }
-  ];
+  const storedUser = getUser();
+  const currentUser = storedUser ? {
+    name: `${storedUser?.firstName || ''} ${storedUser?.lastName || ''}`?.trim() || storedUser?.email,
+    role: storedUser?.role,
+    avatar: storedUser?.avatar ?? "/default-avatar.png"
+  } : null;
 
   return (
     <div className="min-h-screen bg-background elegant-scroll">
       <Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
       <div className="lg:ml-64">
         <Header onMenuToggle={toggleSidebar} user={currentUser} />
-        
+
         <main className="p-4 sm:p-6 lg:p-8">
-          {/* Fixed spacing with consistent gap */}
           <div className="space-y-6">
             <Breadcrumb customItems={[]} />
-            
+
             <PageHeader
               title="Dashboard"
               subtitle="Welcome back! Here's what's happening at your school today."
@@ -108,14 +100,12 @@ const Dashboard = () => {
               }
             />
 
-            {/* Date Range Filter - Improved alignment */}
             <div className="flex justify-start">
               <DateRangeFilter onFilterChange={handleDateRangeChange} />
             </div>
 
-            {/* KPI Cards - Fixed grid alignment with consistent heights */}
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-              {kpiData?.map((kpi, index) => (
+              {dashboardData?.kpis?.map((kpi, index) => (
                 <div key={index} className="h-full">
                   <KPICard
                     title={kpi?.title}
@@ -129,39 +119,33 @@ const Dashboard = () => {
               ))}
             </div>
 
-            {/* Charts Section - Updated layout */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Monthly Collection Trend Chart - 2 columns on large screens */}
               <div className="lg:col-span-2">
                 <div className="min-h-[400px]">
-                  <MonthlyRevenueChart />
+                  <MonthlyRevenueChart data={dashboardData?.monthlyRevenue} />
                 </div>
               </div>
-              
-              {/* Invoice Status Chart - 1 column on large screens */}
+
               <div className="lg:col-span-1">
                 <div className="min-h-[400px]">
-                  <InvoiceStatusChart />
+                  <InvoiceStatusChart data={dashboardData?.invoiceStatus} />
                 </div>
               </div>
             </div>
 
-            {/* Pay by Class Chart - Above Priority Invoices */}
             <div className="w-full">
               <div className="min-h-[400px]">
-                <PayByClassChart />
+                <PayByClassChart data={dashboardData?.payByClass} />
               </div>
             </div>
 
-            {/* Priority Invoices Section - Full Width */}
             <div className="w-full">
-              <PriorityInvoicesTable />
+              <PriorityInvoicesTable invoices={dashboardData?.priorityInvoices} />
             </div>
 
-            {/* Bottom Section - Fixed alignment and consistent heights */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
               <div className="min-h-[500px]">
-                <RecentActivity />
+                <RecentActivity activities={dashboardData?.recentActivity} />
               </div>
               <div className="min-h-[500px]">
                 <QuickActions />

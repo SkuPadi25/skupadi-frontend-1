@@ -1,25 +1,15 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const MonthlyRevenueChart = () => {
-  const data = [
-    { month: 'Jan', collection: 42000, target: 45000 },
-    { month: 'Feb', collection: 48000, target: 50000 },
-    { month: 'Mar', collection: 44000, target: 46000 },
-    { month: 'Apr', collection: 56000, target: 58000 },
-    { month: 'May', collection: 50000, target: 52000 },
-    { month: 'Jun', collection: 62000, target: 65000 },
-    { month: 'Jul', collection: 58000, target: 60000 }
-  ];
-
+const MonthlyRevenueChart = ({ data = [] }) => {
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload?.length) {
       return (
         <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-sm font-medium text-foreground mb-2">{`${label} 2025`}</p>
+          <p className="text-sm font-medium text-foreground mb-2">{label}</p>
           {payload?.map((entry, index) => (
             <p key={index} className="text-sm" style={{ color: entry?.color }}>
-              {`${entry?.name}: ₦${entry?.value?.toLocaleString()}`}
+              {`${entry?.name}: NGN ${entry?.value?.toLocaleString()}`}
             </p>
           ))}
         </div>
@@ -46,45 +36,45 @@ const MonthlyRevenueChart = () => {
           </div>
         </div>
       </div>
-      
+
       <div className="w-full h-64 sm:h-80 lg:h-96" aria-label="Monthly Collection Trend Line Chart">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart 
-            data={data} 
-            margin={{ 
-              top: 20, 
-              right: window.innerWidth < 640 ? 10 : 30, 
-              left: window.innerWidth < 640 ? 10 : 20, 
-              bottom: 5 
+          <LineChart
+            data={data}
+            margin={{
+              top: 20,
+              right: 20,
+              left: 10,
+              bottom: 5
             }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-            <XAxis 
-              dataKey="month" 
+            <XAxis
+              dataKey="month"
               stroke="var(--color-muted-foreground)"
               fontSize={12}
-              tick={{ fontSize: window.innerWidth < 640 ? 10 : 12 }}
+              tick={{ fontSize: 12 }}
             />
-            <YAxis 
+            <YAxis
               stroke="var(--color-muted-foreground)"
               fontSize={12}
-              tick={{ fontSize: window.innerWidth < 640 ? 10 : 12 }}
-              tickFormatter={(value) => `₦${value / 1000}k`}
-              width={window.innerWidth < 640 ? 40 : 60}
+              tick={{ fontSize: 12 }}
+              tickFormatter={(value) => `NGN ${value / 1000}k`}
+              width={80}
             />
             <Tooltip content={<CustomTooltip />} />
-            <Line 
-              type="monotone" 
-              dataKey="collection" 
-              stroke="var(--color-primary)" 
+            <Line
+              type="monotone"
+              dataKey="collection"
+              stroke="var(--color-primary)"
               strokeWidth={3}
               dot={{ fill: "var(--color-primary)", strokeWidth: 2, r: 4 }}
               name="Actual Collection"
             />
-            <Line 
-              type="monotone" 
-              dataKey="target" 
-              stroke="var(--color-accent)" 
+            <Line
+              type="monotone"
+              dataKey="target"
+              stroke="var(--color-accent)"
               strokeWidth={2}
               strokeDasharray="5 5"
               dot={{ fill: "var(--color-accent)", strokeWidth: 2, r: 3 }}

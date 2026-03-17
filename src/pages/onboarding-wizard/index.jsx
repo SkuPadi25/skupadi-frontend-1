@@ -26,7 +26,7 @@ const OnboardingWizard = () => {
   useEffect(() => {
     const registration = getRegistration();
     if (!registration) {
-      navigate("/signup"); // cannot skip step 1
+      navigate("/school-registration", { replace: true }); // cannot skip step 1
     }
   }, [navigate]);
 
@@ -246,7 +246,7 @@ const OnboardingWizard = () => {
                     className={`w-full px-4 py-3 bg-gray-50 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent focus:bg-white outline-none transition ${errors?.phoneNumber ? 'border-red-300' : 'border-gray-200'
                       }`}
                   />
-                  {errors?.Number && (
+                  {errors?.phoneNumber && (
                     <p className="mt-1 text-sm text-red-600">{errors?.phoneNumber}</p>
                   )}
                   <p className="mt-1 text-xs text-gray-500">
