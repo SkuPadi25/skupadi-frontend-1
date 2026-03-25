@@ -8,14 +8,18 @@ import PasswordStrengthMeter from "./components/PasswordStrengthMeter";
 import CountryCodeSelector from "./components/CountryCodeSelector";
 import TermsOfServiceModal from "./components/TermsOfServiceModal";
 import { saveRegistration, getAccessToken } from "../../utils/storage";
+import { useAuth } from "../../contexts/AuthContext";
+import { register } from "../../services/authService";
+import { getPostAuthRedirect } from "../../utils/schoolSetup";
 
 const SchoolRegistration = () => {
   const navigate = useNavigate();
+  const { setUser } = useAuth();
 
   useEffect(() => {
     const token = getAccessToken();
     if (token) {
-      navigate("/dashboard", { replace: true });
+      navigate("/school-setup", { replace: true });
     }
   }, [navigate]);
   const [formData, setFormData] = useState({
@@ -108,14 +112,38 @@ const SchoolRegistration = () => {
 
     try {
       // SAVE LOCALLY — DO NOT CALL BACKEND
-      saveRegistration({
+      const registrationPayload = {
         fullName: formData.fullName,
         email: formData.email,
-        phone: formData.countryCode + formData.phone,
+        phoneNumber: formData.countryCode + formData.phone,
         password: formData.password,
-      });
+      };
 
-      navigate("/school-onboarding");
+      try {
+        const result = await register(registrationPayload);
+        const nextUser = result?.user || null;
+
+        setUser(nextUser);
+        navigate(getPostAuthRedirect(nextUser), { replace: true });
+        return;
+      } catch (registrationError) {
+        const statusCode = registrationError?.response?.status;
+        const isSessionlessResponse =
+          registrationError?.message ===
+          "Registration succeeded without an authenticated session";
+        const canFallbackToLegacyFlow =
+          isSessionlessResponse ||
+          statusCode === 404 ||
+          statusCode === 405 ||
+          statusCode === 501;
+
+        if (!canFallbackToLegacyFlow) {
+          throw registrationError;
+        }
+      }
+
+      saveRegistration(registrationPayload);
+      navigate("/school-setup");
     } catch (err) {
       console.error(err);
       setErrors({ submit: "Failed to continue. Please try again." });
@@ -146,9 +174,9 @@ const SchoolRegistration = () => {
         <div className="relative z-10">
           <div className="flex items-center gap-3">
             <img
-              src="/assets/images/SkuPadi_Logo-removebg-preview_1-1758104649539.png"
+              src="/assets/images/sk1e.png"
               alt="Skupadi Logo"
-              className="w-40 h-40 object-contain  rounded-lg p-2"
+              className="h-20 w-auto object-contain"
             />
 
           </div>

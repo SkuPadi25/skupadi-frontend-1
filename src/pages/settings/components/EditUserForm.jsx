@@ -5,6 +5,7 @@ import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import { Checkbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
+import { SCHOOL_STAFF_ROLE_OPTIONS } from '../../../utils/roleDisplay';
 
 
 const EditUserForm = ({ user, onBack }) => {
@@ -16,8 +17,7 @@ const EditUserForm = ({ user, onBack }) => {
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
-    reset
+    watch
   } = useForm({
     defaultValues: {
       fullName: '',
@@ -31,26 +31,7 @@ const EditUserForm = ({ user, onBack }) => {
 
   const watchedRole = watch('role');
 
-  const roleOptions = [
-    { 
-      value: 'Super Admin', 
-      label: 'Super Admin', 
-      description: 'Full system access with all permissions',
-      requiresMFA: true 
-    },
-    { 
-      value: 'Finance Manager', 
-      label: 'Finance Manager', 
-      description: 'Manage invoices, payments, and reports. Cannot delete system data.',
-      requiresMFA: true 
-    },
-    { 
-      value: 'Bursar', 
-      label: 'Bursar', 
-      description: 'Record payments and issue receipts. Limited system access.',
-      requiresMFA: false 
-    }
-  ];
+  const roleOptions = SCHOOL_STAFF_ROLE_OPTIONS;
 
   const statusOptions = [
     { value: 'Active', label: 'Active' },
@@ -110,7 +91,7 @@ const EditUserForm = ({ user, onBack }) => {
   };
 
   const handleTransferOwnership = async () => {
-    if (!confirm('Are you sure you want to transfer Super Admin ownership to this user? This action cannot be undone.')) {
+    if (!confirm('Are you sure you want to transfer ownership to this user? This action cannot be undone.')) {
       return;
     }
 
@@ -315,17 +296,17 @@ const EditUserForm = ({ user, onBack }) => {
                 </div>
               )}
 
-              {/* Ownership Transfer (only for Super Admin role) */}
-              {watchedRole === 'Super Admin' && user?.role !== 'Super Admin' && (
+              {/* Ownership Transfer */}
+              {watchedRole === 'OWNER' && user?.role !== 'OWNER' && (
                 <div className="border border-orange-200 bg-orange-50 rounded-lg p-4">
                   <div className="flex items-start space-x-3">
                     <Icon name="AlertTriangle" size={20} className="text-orange-600 flex-shrink-0 mt-0.5" />
                     <div className="flex-1">
                       <h5 className="text-sm font-medium text-orange-800 mb-2">
-                        Super Admin Role Assignment
+                        Ownership Transfer
                       </h5>
                       <p className="text-sm text-orange-700 mb-3">
-                        Assigning the Super Admin role will transfer full ownership of the school account to this user. 
+                        Assigning the Owner role will transfer full ownership of the school account to this user.
                         This action requires special confirmation.
                       </p>
                       <Button

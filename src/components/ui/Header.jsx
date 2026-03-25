@@ -7,8 +7,21 @@ import NotificationCenter from '../NotificationCenter';
 import { useSchool } from '../../contexts/SchoolContext';
 import { useAuth } from '../../contexts/AuthContext';
 import { getUser, clearAuth } from '../../utils/storage';
+import { getRoleLabel } from '../../utils/roleDisplay';
 
 // import math
+
+const normalizeAccountLevel = (value) => {
+  if (!value) return 'Basic';
+
+  const normalizedValue = String(value).trim().toLowerCase();
+
+  if (normalizedValue === 'compliant') return 'Compliant';
+  if (normalizedValue === 'verified') return 'Verified';
+  if (normalizedValue === 'basic') return 'Basic';
+
+  return 'Basic';
+};
 
 const Header = ({ onMenuToggle }) => {
   const navigate = useNavigate();
@@ -95,6 +108,10 @@ const Header = ({ onMenuToggle }) => {
     const u = getUser();
     setUser(u);
   }, []);
+
+  const currentAccountLevel = normalizeAccountLevel(
+    user?.accountLevel || user?.level || user?.tier || user?.verificationLevel || user?.complianceLevel
+  );
 
 
 
@@ -238,7 +255,7 @@ const Header = ({ onMenuToggle }) => {
                         </p>
                         <div className="flex items-center space-x-2 mt-1">
                           <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary/10 text-primary">
-                            {user?.role || "Admin"}
+                            {getRoleLabel(user?.role)}
                           </span>
                           <span className="inline-flex items-center space-x-1 text-xs text-success">
                             <div className="w-1.5 h-1.5 bg-success rounded-full"></div>
@@ -251,6 +268,29 @@ const Header = ({ onMenuToggle }) => {
 
                   {/* Menu Items */}
                   <div className="py-2 overflow-y-auto max-h-[calc(100vh-14rem)]">
+                    <div className="px-4 pb-3">
+                      <div className="rounded-xl border border-border bg-muted/40 p-3">
+                        <div className="flex items-center justify-between space-x-3">
+                          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                            <Icon name="ShieldCheck" size={16} className="text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-foreground">Account Level</p>
+                          </div>
+                          <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                            {currentAccountLevel}
+                          </span>
+                        </div>
+                        <div className="mt-2">
+                          <p className="text-xs text-muted-foreground">
+                            Access shown here follows the user&apos;s current onboarding/compliance status.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-border my-2"></div>
+
                     {/* Profile Management Section */}
                     <div className="px-2">
                       <p className="px-2 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">

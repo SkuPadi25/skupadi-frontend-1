@@ -10,7 +10,7 @@ import { Upload, ArrowLeft } from "lucide-react";
 
 const OwnerInformation = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
 
   const [formData, setFormData] = useState({
     bvn: "",
@@ -30,15 +30,15 @@ const OwnerInformation = () => {
     const reg = getRegistration();
     const schoolId = getSchoolId();
 
-    if (!reg) {
+    if (!user && !reg) {
       navigate("/school-registration", { replace: true });
       return;
     }
 
     if (!schoolId) {
-      navigate("/school-onboarding", { replace: true });
+      navigate("/school-setup", { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   /* ================================
      INPUT HANDLERS
@@ -164,7 +164,7 @@ const OwnerInformation = () => {
   };
 
   const handleBack = () => {
-    navigate("/school-onboarding");
+    navigate("/school-setup");
   };
 
 

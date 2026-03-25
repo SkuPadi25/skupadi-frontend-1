@@ -14,6 +14,8 @@ import PageHeader from '../../components/ui/PageHeader';
 import PersonalInfo from './components/PersonalInfo';
 import AccountSettings from './components/AccountSettings';
 import PreferencesTab from './components/PreferencesTab';
+import { getUser } from '../../utils/storage';
+import { getRoleLabel } from '../../utils/roleDisplay';
 
 const MyProfile = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,13 +28,18 @@ const MyProfile = () => {
   };
 
   // Mock current user data - in real app get from auth context/service
-  const storedUser = localStorage.getItem("user");
+  const storedUser = getUser();
 
   const currentUser = storedUser
   ? {
-      name: `${storedUser.firstName} ${storedUser.lastName}`,
-      role: storedUser.role,
-      avatar: storedUser.avatar ?? "/default-avatar.png"
+      name: `${storedUser?.firstName || ''} ${storedUser?.lastName || ''}`.trim(),
+      role: getRoleLabel(storedUser?.role),
+      avatar: storedUser?.avatar ?? "/default-avatar.png",
+      email: storedUser?.email,
+      phone: storedUser?.phone || storedUser?.phoneNumber,
+      school: storedUser?.school,
+      joinDate: storedUser?.createdAt,
+      lastLogin: storedUser?.lastLoginAt
     }
   : null;
 

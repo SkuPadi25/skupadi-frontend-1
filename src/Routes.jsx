@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes as RouterRoutes, Route } from "react-router-dom";
+import { BrowserRouter, Routes as RouterRoutes, Route, Navigate } from "react-router-dom";
 import ScrollToTop from "components/ScrollToTop";
 import ErrorBoundary from "components/ErrorBoundary";
 // Add your imports here
@@ -24,6 +24,7 @@ import MyProfile from "pages/my-profile";
 import Wallet from "pages/wallet";
 import TransferWallet from "pages/transfer-wallet";
 import ProtectedRoute from "components/ProtectedRoute";
+import SetupCompletedRoute from "components/SetupCompletedRoute";
 import NotFound from "pages/NotFound";
 
 const Routes = () => {
@@ -37,9 +38,9 @@ const Routes = () => {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <SetupCompletedRoute>
                 <Dashboard />
-              </ProtectedRoute>
+              </SetupCompletedRoute>
             }
           />
           <Route path="/add-edit-student" element={<AddEditStudent />} />
@@ -52,7 +53,8 @@ const Routes = () => {
           <Route path="/payment-structure-management" element={<PaymentStructureManagement />} />
           <Route path="/school-registration" element={<SchoolRegistration />} />
           <Route path="/school-login" element={<SchoolLogin />} />
-          <Route path="/school-onboarding" element={<OnboardingWizard />} />
+          <Route path="/school-setup" element={<OnboardingWizard />} />
+          <Route path="/school-onboarding" element={<Navigate to="/school-setup" replace />} />
           <Route path="/owner-information" element={<OwnerInformation />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/log-out" element={<LogOut />} />

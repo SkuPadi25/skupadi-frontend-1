@@ -3,6 +3,7 @@ import Button from '../../../components/ui/Button';
 import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import Icon from '../../../components/AppIcon';
+import { getRoleLabel } from '../../../utils/roleDisplay';
 
 
 const UserManagementTable = ({ onEditUser }) => {
@@ -23,7 +24,7 @@ const UserManagementTable = ({ onEditUser }) => {
       fullName: 'Sarah Mitchell',
       email: 'sarah.mitchell@school.edu',
       phone: '+234 801 234 5678',
-      role: 'Super Admin',
+      role: 'OWNER',
       status: 'Active',
       lastLogin: '2025-01-04T08:30:00Z',
       createdAt: '2024-12-01T10:00:00Z'
@@ -33,48 +34,17 @@ const UserManagementTable = ({ onEditUser }) => {
       fullName: 'Michael Johnson',
       email: 'michael.johnson@school.edu',
       phone: '+234 802 345 6789',
-      role: 'Finance Manager',
+      role: 'DESIGNATED_ADMIN',
       status: 'Active',
       lastLogin: '2025-01-03T14:20:00Z',
       createdAt: '2024-12-05T09:15:00Z'
-    },
-    {
-      id: 3,
-      fullName: 'Emily Rodriguez',
-      email: 'emily.rodriguez@school.edu',
-      phone: '+234 803 456 7890',
-      role: 'Bursar',
-      status: 'Active',
-      lastLogin: '2025-01-04T09:45:00Z',
-      createdAt: '2024-12-10T11:30:00Z'
-    },
-    {
-      id: 4,
-      fullName: 'David Thompson',
-      email: 'david.thompson@school.edu',
-      phone: '+234 804 567 8901',
-      role: 'Finance Manager',
-      status: 'Inactive',
-      lastLogin: '2024-12-28T16:15:00Z',
-      createdAt: '2024-11-15T13:45:00Z'
-    },
-    {
-      id: 5,
-      fullName: 'Lisa Anderson',
-      email: 'lisa.anderson@school.edu',
-      phone: '+234 805 678 9012',
-      role: 'Bursar',
-      status: 'Active',
-      lastLogin: '2025-01-02T12:00:00Z',
-      createdAt: '2024-12-20T15:20:00Z'
     }
   ];
 
   const roleOptions = [
     { value: 'all', label: 'All Roles' },
-    { value: 'Super Admin', label: 'Super Admin' },
-    { value: 'Finance Manager', label: 'Finance Manager' },
-    { value: 'Bursar', label: 'Bursar' }
+    { value: 'OWNER', label: 'Owner' },
+    { value: 'DESIGNATED_ADMIN', label: 'Designated Admin' }
   ];
 
   const statusOptions = [
@@ -104,7 +74,7 @@ const UserManagementTable = ({ onEditUser }) => {
       filtered = filtered?.filter(user => 
         user?.fullName?.toLowerCase()?.includes(query) ||
         user?.email?.toLowerCase()?.includes(query) ||
-        user?.role?.toLowerCase()?.includes(query)
+        getRoleLabel(user?.role)?.toLowerCase()?.includes(query)
       );
     }
 
@@ -197,16 +167,15 @@ const UserManagementTable = ({ onEditUser }) => {
   const RoleBadge = ({ role }) => {
     const getRoleColor = (role) => {
       switch (role) {
-        case 'Super Admin': return 'bg-purple-100 text-purple-800';
-        case 'Finance Manager': return 'bg-blue-100 text-blue-800';
-        case 'Bursar': return 'bg-orange-100 text-orange-800';
+        case 'OWNER': return 'bg-purple-100 text-purple-800';
+        case 'DESIGNATED_ADMIN': return 'bg-blue-100 text-blue-800';
         default: return 'bg-gray-100 text-gray-800';
       }
     };
 
     return (
       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getRoleColor(role)}`}>
-        {role}
+        {getRoleLabel(role)}
       </span>
     );
   };

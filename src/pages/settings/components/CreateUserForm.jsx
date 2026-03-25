@@ -5,6 +5,7 @@ import Input from '../../../components/ui/Input';
 import Select from '../../../components/ui/Select';
 import { Checkbox } from '../../../components/ui/Checkbox';
 import Icon from '../../../components/AppIcon';
+import { SCHOOL_STAFF_ROLE_OPTIONS } from '../../../utils/roleDisplay';
 
 const CreateUserForm = ({ onBack }) => {
   const [loading, setLoading] = useState(false);
@@ -36,26 +37,7 @@ const CreateUserForm = ({ onBack }) => {
   const watchedPassword = watch('password');
   const watchedConfirmPassword = watch('confirmPassword');
 
-  const roleOptions = [
-    { 
-      value: 'Super Admin', 
-      label: 'Super Admin', 
-      description: 'Full system access with all permissions',
-      requiresMFA: true 
-    },
-    { 
-      value: 'Finance Manager', 
-      label: 'Finance Manager', 
-      description: 'Manage invoices, payments, and reports. Cannot delete system data.',
-      requiresMFA: true 
-    },
-    { 
-      value: 'Bursar', 
-      label: 'Bursar', 
-      description: 'Record payments and issue receipts. Limited system access.',
-      requiresMFA: false 
-    }
-  ];
+  const roleOptions = SCHOOL_STAFF_ROLE_OPTIONS;
 
   const statusOptions = [
     { value: 'Active', label: 'Active' },
@@ -165,9 +147,9 @@ const CreateUserForm = ({ onBack }) => {
             <Icon name="ArrowLeft" size={16} className="text-foreground" />
           </button>
           <div>
-            <h3 className="text-lg font-semibold text-foreground">Create New User</h3>
+            <h3 className="text-lg font-semibold text-foreground">Invite Staff User</h3>
             <p className="text-sm text-muted-foreground">
-              Add a new user to your school management system
+              Add the owner or a designated admin for this school
             </p>
           </div>
         </div>
@@ -396,7 +378,7 @@ const CreateUserForm = ({ onBack }) => {
               disabled={!watchedRole || passwordStrength?.score < 3}
             >
               <Icon name="UserPlus" size={16} className="mr-2" />
-              Create User
+              Invite User
             </Button>
           </div>
         </form>
