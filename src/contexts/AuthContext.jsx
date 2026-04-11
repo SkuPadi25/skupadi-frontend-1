@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getLS, LS_KEYS } from "../utils/storage";
+import { getLS, LS_KEYS, removeLS, saveUser } from "../utils/storage";
 import { logout as logoutService } from "../services/authService";
+import { isSchoolSetupComplete } from "../utils/schoolSetup";
+import { createDemoUser, FRONTEND_ONLY_MODE } from "../utils/demoMode";
 
 const AuthContext = createContext(null);
 
@@ -11,7 +13,16 @@ export const AuthProvider = ({ children }) => {
   // Load user once on app start
   useEffect(() => {
     const storedUser = getLS(LS_KEYS.USER);
-    if (storedUser) setUser(storedUser);
+    if (storedUser) {
+      if (isSchoolSetupComplete(storedUser)) {
+        removeLS("skp_schoolSetupDraft");
+      }
+      setUser(storedUser);
+    } else if (FRONTEND_ONLY_MODE) {
+      const demoUser = createDemoUser();
+      saveUser(demoUser);
+      setUser(demoUser);
+    }
     setLoading(false);
   }, []);
 

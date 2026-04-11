@@ -1,8 +1,13 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { isSchoolSetupComplete } from "../utils/schoolSetup";
+import { FRONTEND_ONLY_MODE } from "../utils/demoMode";
 
 const SetupCompletedRoute = ({ children }) => {
+  if (FRONTEND_ONLY_MODE) {
+    return children;
+  }
+
   const { user, loading } = useAuth();
 
   if (loading) return null;
