@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Calendar, Check, ChevronDown, Eye, EyeOff, Upload } from "lucide-react";
+import { ArrowLeft, Calendar, Check, ChevronDown, Eye, EyeOff, Upload, ChevronLeft } from "lucide-react";
 import Button from "../../components/ui/Button";
 import { useAuth } from "../../contexts/AuthContext";
 import {
@@ -256,7 +256,13 @@ const OnboardingWizard = () => {
       if (result?.user) setUser(result.user);
       clearOnboarding();
       removeLS(DRAFT_KEY);
-      navigate("/dashboard", { replace: true });
+      navigate("/school-setup/submitted", {
+        replace: true,
+        state: {
+          schoolName: data.schoolName,
+          adminName: data.adminFullName,
+        },
+      });
     } catch (err) {
       setErrors((prev) => ({ ...prev, submit: err?.response?.data?.message || "We couldn't submit your setup just yet." }));
     } finally {
@@ -266,25 +272,19 @@ const OnboardingWizard = () => {
 
   return (
     <div className="min-h-screen bg-[#eff3ff] lg:flex">
-      <aside className="hidden bg-[#132365] px-6 py-4 text-white lg:flex lg:w-[33%] lg:flex-col">
+      <aside className="hidden bg-[#132365] px-6 py-4 text-white lg:flex lg:w-[15%] lg:flex-col">
         <div>
           <img src="/assets/images/sk1e.png" alt="SkuPadi" className="h-12 w-auto object-contain" />
         </div>
-        <div className="mt-20">
-          <h5 className="text-[40px] font-semibold leading-[1.04] tracking-[-0.03em]">
-            Set up your school once.<br />Run operations with ease.</h5>
-        </div>
-        <div className="mt-20 2xl:mt-40 space-y-5 text-[#101828]">
-          <img src="../assets/images/skupadi_image.png" alt="main-image" />
-        </div>
-        <div className="mt-auto text-[12px] text-[rgba(255,255,255,0.66)]">© 2025 SkuPadi A Product of Astroidegita Technologies LTD. All Right Reserved</div>
       </aside>
       <main className="flex-1 px-4 py-5 md:px-8 md:py-8 lg:px-10">
         <div className="mx-auto max-w-[900px]">
-          <div className="mb-8 flex justify-end text-[14px] font-medium text-[#1d4ed8]">Need help? Get support ?</div>
+          <div className="mb-8 flex justify-start text-[14px] font-medium text-[#1d4ed8]"> 
+            <button className="flex items-center "><ChevronLeft />back to dashboard</button>
+          </div>
           <header className="mb-8 text-center">
-            <h1 className="font-serif text-[30px] font-bold text-[#1b3278] md:text-[42px]">{["Tell us about your school", "Know your school", "Verify your school for payments", "Principal administrator verification", "Secure your account", "Review your information"][step]}</h1>
-            <p className="mx-auto mt-4 max-w-[760px] text-[18px] leading-7 text-[#101828]">{["This information helps us create your school profile and personalize invoices, receipts, and reports.", "Help us understand the type and structure of your institution", "To activate payment features, we need to verify your institution and supporting documents.", "This helps us verify the authorized representative of the school and protect access to school records and payments.", "Create a password to access your School admin dashboard.", "Please confirm that all details are accurate. This information will be used for verification and account setup."][step]}</p>
+            <h1 className="font-serif text-[30px] font-bold text-[#1b3278] md:text-[30px]">{["Tell us about your school", "Know your school", "Verify your school for payments", "Principal administrator verification", "Secure your account", "Review your information"][step]}</h1>
+            <p className="mx-auto mt-4 max-w-[760px] text-[14px] leading-7 text-[#101828]">{["This information helps us create your school profile and personalize invoices, receipts, and reports.", "Help us understand the type and structure of your institution", "To activate payment features, we need to verify your institution and supporting documents.", "This helps us verify the authorized representative of the school and protect access to school records and payments.", "Create a password to access your School admin dashboard.", "Please confirm that all details are accurate. This information will be used for verification and account setup."][step]}</p>
           </header>
           <Stepper step={step} />
           <section className={`${boxClass} mt-6`}>

@@ -15,6 +15,7 @@ import PaymentStructureManagement from "pages/payment-structure-management";
 import SchoolRegistration from "pages/school-registration";
 import SchoolLogin from "pages/school-login";
 import OnboardingWizard from "pages/onboarding-wizard";
+import SetupSubmitted from "pages/school-setup-submitted";
 import OwnerInformation from "pages/owner-information";
 import ForgotPassword from "pages/ForgotPassword";
 import LogOut from "pages/log-out";
@@ -61,6 +62,7 @@ const Routes = () => {
           <Route path="/school-registration" element={<SchoolRegistration />} />
           <Route path="/school-login" element={<SchoolLogin />} />
           <Route path="/school-setup" element={<OnboardingWizard />} />
+          <Route path="/school-setup/submitted" element={<ProtectedRoute><SetupSubmitted /></ProtectedRoute>} />
           <Route path="/school-onboarding" element={<Navigate to="/school-setup" replace />} />
           <Route path="/owner-information" element={<OwnerInformation />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />

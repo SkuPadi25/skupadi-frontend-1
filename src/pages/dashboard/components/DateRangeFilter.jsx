@@ -26,21 +26,25 @@ const DateRangeFilter = ({ onFilterChange }) => {
   };
 
   return (
-    <div className="bg-card rounded-lg border border-border p-4 mb-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center space-x-2">
-          <Icon name="Calendar" size={20} className="text-muted-foreground" />
-          <span className="text-sm font-medium text-foreground">Date Range:</span>
+    <div className="bg-card border border-border p-3 w-full lg:w-auto">
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3">
+        <div className="flex items-center space-x-2 shrink-0">
+          <Icon name="Calendar" size={14} className="text-foreground" />
+          <span className="text-xs font-medium text-foreground">Date Range</span>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-wrap items-center gap-1.5">
           {predefinedRanges.map((range) => (
             <Button
               key={range.value}
-              variant={selectedRange === range.value ? "default" : "outline"}
-              size="sm"
+              variant={selectedRange === range.value ? "navy" : "ghost"}
+              size="xs"
               onClick={() => handleRangeChange(range.value)}
-              className="text-xs rounded-xl"
+              className={`h-7 px-3 text-[11px] ${
+                selectedRange === range.value
+                  ? "rounded-full"
+                  : "text-foreground hover:bg-muted"
+              }`}
             >
               {range.label}
             </Button>
@@ -49,7 +53,7 @@ const DateRangeFilter = ({ onFilterChange }) => {
       </div>
 
       {isCustomOpen && (
-        <div className="mt-4 pt-4 border-t border-border">
+        <div className="mt-3 pt-3 border-t border-border">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <label className="block text-xs font-medium text-foreground mb-1">

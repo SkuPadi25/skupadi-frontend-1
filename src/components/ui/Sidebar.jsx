@@ -1,11 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Icon from '../AppIcon';
-import SchoolSelector from './SchoolSelector';
 
 const Sidebar = ({ isOpen, onToggle }) => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isHidden, setIsHidden] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.localStorage?.getItem('skp_sidebarHidden') === 'true';
+  });
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    document.documentElement.dataset.sidebarHidden = isHidden ? 'true' : 'false';
+    window.localStorage?.setItem('skp_sidebarHidden', String(isHidden));
+  }, [isHidden]);
 
   const navigationItems = [
     {
@@ -190,13 +200,25 @@ const Sidebar = ({ isOpen, onToggle }) => {
           onClick={onToggle} />
 
       }
+      {isHidden && (
+        <button
+          type="button"
+          onClick={() => setIsHidden(false)}
+          className="fixed left-4 top-20 z-40 hidden h-10 w-10 items-center justify-center rounded-md border border-border bg-card text-foreground shadow-sm transition-colors hover:bg-muted lg:flex"
+          aria-label="Show side menu"
+          title="Show side menu"
+        >
+          <Icon name="PanelRightOpen" size={18} />
+        </button>
+      )}
+
       {/* Sidebar */}
       <aside
         className={`
           fixed top-0 left-0 h-full border-r border-border z-50
           w-64 transform transition-transform duration-300 ease-in-out flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0
+          ${isHidden ? 'lg:-translate-x-full' : 'lg:translate-x-0'}
         `}
         style={{ backgroundColor: '#081C48' }}>
 
@@ -216,6 +238,16 @@ const Sidebar = ({ isOpen, onToggle }) => {
               />
             </div>
           </div>
+
+          <button
+            type="button"
+            onClick={() => setIsHidden(true)}
+            className="absolute right-6 hidden rounded-md p-1 text-white transition-colors hover:bg-gray-700 lg:inline-flex"
+            aria-label="Hide side menu"
+            title="Hide side menu"
+          >
+            <Icon name="PanelLeftClose" size={20} color="white" />
+          </button>
 
           {/* Mobile Close Button */}
           <button

@@ -116,4 +116,10 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  @media (min-width: 1024px) {
+    :root[data-sidebar-hidden="true"] .lg\:ml-64 {
+      margin-left: 0 !important;
+    }
+  }
 }
