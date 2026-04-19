@@ -233,7 +233,7 @@ const BillableItemsSection = ({ formData, errors, onChange }) => {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium text-foreground flex items-center">
           <div className="w-2 h-2 bg-warning rounded-full mr-3"></div>
-          Optional Services & Billable Items
+          Billable Items
         </h3>
         <div className="flex items-center space-x-4">
           <div className="text-sm text-muted-foreground">
@@ -257,10 +257,8 @@ const BillableItemsSection = ({ formData, errors, onChange }) => {
       ) : (
         <>
           <div className="text-sm text-muted-foreground mb-4">
-            Configure optional services for this student. Toggle services on/off and set custom amounts for individual billing.
-            <span className="block mt-1 text-xs">
-              💡 These settings determine which special invoices this student is eligible for.
-            </span>
+            Select applicable billing items for this student. Mandatory items are preselected and cannot be removed.
+             
           </div>
 
           <div className="space-y-6">
@@ -383,7 +381,7 @@ const BillableItemsSection = ({ formData, errors, onChange }) => {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center space-x-2">
                   <DollarSign size={16} className="text-success" />
-                  <span className="font-medium text-foreground">Billing Configuration Summary</span>
+                  <span className="font-medium text-foreground">Billing Summary</span>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-muted-foreground">
@@ -401,31 +399,18 @@ const BillableItemsSection = ({ formData, errors, onChange }) => {
                   {(formData?.billableItems || [])?.filter(item => item?.isMandatory)?.map(item => (
                     <div key={item?.id} className="flex justify-between">
                       <span>{item?.name}</span>
-                      <span className="font-medium">₦{item?.amount?.toLocaleString()}</span>
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div className="text-muted-foreground mb-2">Optional Services:</div>
-                  {(formData?.billableItems || [])?.filter(item => !item?.isMandatory && item?.isActive)?.map(item => (
-                    <div key={item?.id} className="flex justify-between">
-                      <span>{item?.name}</span>
-                      <span className="font-medium">₦{item?.amount?.toLocaleString()}</span>
+                     
                     </div>
                   ))}
                 </div>
               </div>
-              
               <div className="mt-4 text-xs text-muted-foreground border-t border-border pt-3">
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-1">
                     <div className="w-2 h-2 bg-primary rounded-full"></div>
-                    <span>Special Services: Eligible for bulk special invoicing</span>
+                    <span>These items will be available for invoice generation. You can modify amounts and active status later.</span>
                   </div>
-                  <div className="flex items-center space-x-1">
-                    <div className="w-2 h-2 bg-success rounded-full"></div>
-                    <span>Regular Items: Standard billing items</span>
-                  </div>
+                  
                 </div>
               </div>
             </div>

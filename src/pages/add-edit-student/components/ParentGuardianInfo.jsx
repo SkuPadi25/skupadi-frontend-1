@@ -24,7 +24,7 @@ const ParentGuardianInfo = ({ formData, errors, onChange }) => {
         <div className="w-2 h-2 bg-accent rounded-full mr-3"></div>
         Parent/Guardian Information
       </h3>
-
+      <hr className='m-0 p-0' />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label="Parent/Guardian Name"
@@ -69,6 +69,26 @@ const ParentGuardianInfo = ({ formData, errors, onChange }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Input
+        label="Occupation"
+        type="text"
+        placeholder="Enter parent/guardian occupation"
+        value={formData.occupation}
+        onChange={(e) => handleInputChange('occupation', e.target.value)}
+        error={errors.occupation}
+      />
+
+      <Input
+        label="Home Address"
+        type="text"
+        placeholder="Enter complete address"
+        value={formData.address}
+        onChange={(e) => handleInputChange('address', e.target.value)}
+        error={errors.address}
+      />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label="Emergency Contact Name"
           type="text"
@@ -87,15 +107,7 @@ const ParentGuardianInfo = ({ formData, errors, onChange }) => {
           error={errors.emergencyContactPhone}
         />
       </div>
-
-      <Input
-        label="Occupation"
-        type="text"
-        placeholder="Enter parent/guardian occupation"
-        value={formData.occupation}
-        onChange={(e) => handleInputChange('occupation', e.target.value)}
-        error={errors.occupation}
-      />
+      
     </div>
   );
 };

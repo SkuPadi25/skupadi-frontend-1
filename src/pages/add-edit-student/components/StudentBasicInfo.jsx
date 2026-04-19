@@ -33,11 +33,11 @@ const StudentBasicInfo = ({ formData, errors, onChange }) => {
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-medium text-foreground mb-4 flex items-center">
+      <h3 className="text-lg font-medium text-foreground flex items-center">
         <div className="w-2 h-2 bg-primary rounded-full mr-3"></div>
         Student Information
       </h3>
-
+      <hr className='m-0 p-0' />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           label="First Name"
@@ -95,22 +95,15 @@ const StudentBasicInfo = ({ formData, errors, onChange }) => {
         <Input
           label="Student ID"
           type="text"
-          placeholder="Auto-generated or enter custom ID"
+          placeholder="Auto-generated"
           value={formData.studentId}
           onChange={(e) => handleInputChange('studentId', e.target.value)}
           error={errors.studentId}
-          description="Leave blank for auto-generation"
+          description=""
         />
       </div>
 
-      <Input
-        label="Address"
-        type="text"
-        placeholder="Enter complete address"
-        value={formData.address}
-        onChange={(e) => handleInputChange('address', e.target.value)}
-        error={errors.address}
-      />
+      
     </div>
   );
 };

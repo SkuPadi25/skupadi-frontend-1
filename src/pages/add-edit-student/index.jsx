@@ -10,6 +10,7 @@ import ParentGuardianInfo from './components/ParentGuardianInfo';
 import AdditionalInfo from './components/AdditionalInfo';
 import BillableItemsSection from './components/BillableItemsSection';
 import FormActions from './components/FormActions';
+import Button from '../../components/ui/Button';
 
 const AddEditStudent = () => {
   const navigate = useNavigate();
@@ -304,9 +305,21 @@ const AddEditStudent = () => {
               : 'Enter student details to create a new record'
             }
             icon="UserPlus"
-            actions={[]}
+            actions={
+              <div className="flex items-center space-x-3">
+                  <Button
+              variant="secondary"
+              onClick={() => navigate('/bulk-student-import')}
+              iconName="Upload"
+              iconPosition="left"
+              iconSize={16}
+            >
+              Bulk Import
+            </Button>
+          </div>
+            }
           />
-
+            
           <div className="max-w-4xl mx-auto">
             <div className="bg-card rounded-lg border border-border p-6 card-shadow">
               {errors?.submit && (
@@ -316,14 +329,8 @@ const AddEditStudent = () => {
               )}
 
               <form onSubmit={(e) => e?.preventDefault()} className="space-y-8">
-                {/* Photo Upload */}
-                <StudentPhotoUpload
-                  photo={formData?.photo}
-                  onPhotoChange={handlePhotoChange}
-                  error={errors?.photo}
-                />
-
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                
+                <div className="grid grid-cols-1 gap-8">
                   {/* Left Column - Student Information */}
                   <div className="bg-muted/30 rounded-lg p-6">
                     <StudentBasicInfo
@@ -343,14 +350,7 @@ const AddEditStudent = () => {
                   </div>
                 </div>
 
-                {/* Additional Information - Full Width */}
-                <div className="bg-muted/30 rounded-lg p-6">
-                  <AdditionalInfo
-                    formData={formData}
-                    errors={errors}
-                    onChange={handleInputChange}
-                  />
-                </div>
+                
 
                 {/* Billable Items Section - Full Width */}
                 <div className="bg-muted/30 rounded-lg p-6">
