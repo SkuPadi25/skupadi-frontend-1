@@ -280,7 +280,9 @@ const OnboardingWizard = () => {
       <main className="flex-1 px-4 py-5 md:px-8 md:py-8 lg:px-10">
         <div className="mx-auto max-w-[900px]">
           <div className="mb-8 flex justify-start text-[14px] font-medium text-[#1d4ed8]"> 
-            <button className="flex items-center "><ChevronLeft />back to dashboard</button>
+            <button type="button" onClick={() => navigate("/dashboard")} className="flex items-center ">
+              <ChevronLeft />back to dashboard
+            </button>
           </div>
           <header className="mb-8 text-center">
             <h1 className="font-serif text-[30px] font-bold text-[#1b3278] md:text-[30px]">{["Tell us about your school", "Know your school", "Verify your school for payments", "Principal administrator verification", "Secure your account", "Review your information"][step]}</h1>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ArrowLeft, Bell, Check, ChevronDown, UserCircle } from "lucide-react";
+import { ChevronLeft, Bell, Check, ChevronDown, UserCircle } from "lucide-react";
 import { useAuth } from "../../contexts/AuthContext";
 
 const STEPS = ["School Info", "School Profile", "Verification", "Admin Profile", "Security", "Review"];
@@ -51,7 +51,7 @@ const SetupSubmitted = () => {
               onClick={() => navigate("/dashboard")}
               className="mb-7 inline-flex items-center gap-2 text-xs font-medium text-[#1d2939]"
             >
-              <ArrowLeft className="h-3.5 w-3.5" />
+              <ChevronLeft className="h-3.5 w-3.5" />
               Back to Dashboard
             </button>
 
@@ -126,7 +126,7 @@ const SetupSubmitted = () => {
                   onClick={() => navigate("/dashboard")}
                   className="mt-6 inline-flex items-center justify-center gap-2 text-xs font-medium text-[#344054]"
                 >
-                  <ArrowLeft className="h-3.5 w-3.5" />
+                  <ChevronLeft className="h-3.5 w-3.5" />
                   Back
                 </button>
               </div>
