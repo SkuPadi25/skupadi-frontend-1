@@ -29,8 +29,6 @@ import PaymentPending from "pages/payment/PaymentPending";
 import PaymentFailed from "pages/payment/PaymentFailed";
 
 import TransferWallet from "pages/transfer-wallet";
-import ProtectedRoute from "components/ProtectedRoute";
-import SetupCompletedRoute from "components/SetupCompletedRoute";
 import NotFound from "pages/NotFound";
 
 const Routes = () => {
@@ -43,35 +41,29 @@ const Routes = () => {
           <Route path="/" element={<Navigate to="/school-login" replace />} />
           <Route
             path="/dashboard"
-            element={
-              <ProtectedRoute>
-              <SetupCompletedRoute>
-                <Dashboard />
-              </SetupCompletedRoute>
-              </ProtectedRoute>
-            }
+            element={<Dashboard />}
           />
           <Route path="/add-edit-student" element={<AddEditStudent />} />
           <Route path="/invoices-management" element={<InvoicesManagement />} />
           <Route path="/create-invoice" element={<CreateInvoice />} />
           <Route path="/bulk-student-import" element={<BulkStudentImport />} />
-          <Route path="/students-management" element={<ProtectedRoute> <StudentsManagement /> </ProtectedRoute>} />
-          <Route path="/payments-management" element={<ProtectedRoute> <PaymentsManagement /> </ProtectedRoute>} />
+          <Route path="/students-management" element={<StudentsManagement />} />
+          <Route path="/payments-management" element={<PaymentsManagement />} />
           <Route path="/reports-center" element={<ReportsCenter />} />
           <Route path="/payment-structure-management" element={<PaymentStructureManagement />} />
           <Route path="/school-registration" element={<SchoolRegistration />} />
           <Route path="/school-login" element={<SchoolLogin />} />
           <Route path="/school-setup" element={<OnboardingWizard />} />
-          <Route path="/school-setup/submitted" element={<ProtectedRoute><SetupSubmitted /></ProtectedRoute>} />
+          <Route path="/school-setup/submitted" element={<SetupSubmitted />} />
           <Route path="/school-onboarding" element={<Navigate to="/school-setup" replace />} />
           <Route path="/owner-information" element={<OwnerInformation />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/log-out" element={<LogOut />} />
-          <Route path="/settings" element={<ProtectedRoute> <Settings /> </ProtectedRoute>} />
+          <Route path="/settings" element={<Settings />} />
           <Route path="/invoice-settings" element={<InvoiceSettings />} />
           <Route path="/my-profile" element={<MyProfile />} />
-          <Route path="/wallet" element={<ProtectedRoute> <Wallet /> </ProtectedRoute>} />
-          <Route path="/transfer-wallet" element={<ProtectedRoute> <TransferWallet /> </ProtectedRoute>} />
+          <Route path="/wallet" element={<Wallet />} />
+          <Route path="/transfer-wallet" element={<TransferWallet />} />
           <Route path="/payment/success" element={<PaymentSuccess />} />
         <Route path="/payment/pending" element={<PaymentPending />} />
         <Route path="/payment/failed" element={<PaymentFailed />} />
